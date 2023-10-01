@@ -34,6 +34,13 @@ const handleWordTouchStart = (_e: TouchEvent, word: string) => {
   }, 300);
 };
 
+const handleWordTouchMove = (_e: TouchEvent) => {
+  if (timeout) {
+    clearTimeout(timeout);
+    timeout = null;
+  }
+};
+
 const handleWordTouchEnd = (_e: TouchEvent, word: string) => {
   if (timeout) {
     clearTimeout(timeout);
@@ -88,6 +95,7 @@ const handleWordTouchEnd = (_e: TouchEvent, word: string) => {
           :key="word"
           class="px-3 py-3 bg-white c-slate-7 rd-2 b select-none transition active:bg-slate-100 active:c-slate-9 active:scale-95"
           @touchstart="(e) => handleWordTouchStart(e, word)"
+          @touchmove="(e) => handleWordTouchMove(e)"
           @touchend="(e) => handleWordTouchEnd(e, word)"
           @touchcancel="(e) => handleWordTouchEnd(e, word)"
         >
