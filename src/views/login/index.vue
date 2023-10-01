@@ -12,10 +12,12 @@ import {
 } from "naive-ui";
 import { useUserStore } from "@/store/modules/user";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 
 const dialog = useDialog();
 const message = useMessage();
 const userStore = useUserStore();
+const router = useRouter();
 
 const formRef = ref<FormInst | null>(null);
 const formValue = ref({ username: "", password: "" });
@@ -64,9 +66,10 @@ loginReq.onError((err) => {
 });
 // 登录成功
 loginReq.onSuccess(({ data }) => {
+  message.success("登录成功!");
   const { accessToken } = data;
   userStore.updateAccessToken(accessToken);
-  message.success("登录成功!");
+  router.replace("/");
 });
 // 登录事件
 const handleLogin = () => {
