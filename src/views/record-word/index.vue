@@ -6,9 +6,10 @@ import {
   NDrawer,
   NDrawerContent,
   NIcon,
+  NSwitch,
   useMessage,
 } from "naive-ui";
-import { ArrowForwardRound } from "@vicons/material";
+import { ArrowForwardRound, ArrowDownwardRound } from "@vicons/material";
 import { ref } from "vue";
 import { invalidateCache, useRequest } from "alova";
 import { recordWord, listMyWords, translate } from "@/api/methods/word";
@@ -68,11 +69,16 @@ const getMostFrequentNonLetter = (str: string) => {
   return maxChar;
 };
 
+// 是否自动分割
+const autoSplit = ref(true);
+
 // 提交事件
 const handleTranslate = () => {
   if (inputValue.value.trim() === "") return message.warning("请输入单词");
 
-  const mostFrequentNonLetter = getMostFrequentNonLetter(inputValue.value);
+  const mostFrequentNonLetter =
+    autoSplit.value && getMostFrequentNonLetter(inputValue.value);
+  console.log(mostFrequentNonLetter);
   const words = mostFrequentNonLetter
     ? inputValue.value
         .split(mostFrequentNonLetter)
@@ -120,13 +126,18 @@ const handleUploadRecord = () => {
           maxRows: 10,
         }"
       />
-      <div class="mt-3 flex justify-end gap-3">
-        <NButton @click="handleUpload">选择文件</NButton>
+      <div class="mt-3 flex justify-end items-center gap-3">
+        <div class="grow flex flex-col items-start gap-1">
+          <span class="c-gray-4">自动分割单词</span>
+          <NSwitch v-model:value="autoSplit" />
+        </div>
+        <NButton class="shrink-0" @click="handleUpload">选择文件</NButton>
         <NButton
+          class="shrink-0"
           type="primary"
           :loading="translateReq.loading.value"
           @click="handleTranslate"
-          >提交</NButton
+          >开始翻译</NButton
         >
       </div>
     </div>
@@ -148,7 +159,8 @@ const handleUploadRecord = () => {
           </div>
         </template>
 
-        <ul class="flex flex-wrap gap-3">
+        <!-- 自动切割的单词翻译结果 -->
+        <ul v-if="autoSplit" class="flex flex-wrap gap-3">
           <li
             v-for="item in translateReq.data.value"
             class="px-3 py-2 flex justify-between items-center gap-3 b rd-3"
@@ -160,6 +172,19 @@ const handleUploadRecord = () => {
             <span>{{ item.translation }}</span>
           </li>
         </ul>
+
+        <!-- 整句翻译结果 -->
+        <div v-else class="flex flex-col gap-3">
+          <div class="px-5 py-3 b rd-3">
+            {{ translateReq.data.value[0].word }}
+          </div>
+          <n-icon class="self-center text-2xl c-gray-3">
+            <arrow-downward-round />
+          </n-icon>
+          <div class="px-5 py-3 b rd-3">
+            {{ translateReq.data.value[0].translation }}
+          </div>
+        </div>
       </n-drawer-content>
     </n-drawer>
   </div>
