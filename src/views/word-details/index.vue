@@ -1,0 +1,15 @@
+<script lang="ts" setup>
+import CommonHeader from "@/components/common-header.vue";
+
+const props = defineProps<{
+  word: string;
+}>();
+</script>
+
+<template>
+  <div>
+    <CommonHeader :title="props.word" />
+
+    <div class="px-3 pb-3">这里是单词详情</div>
+  </div>
+</template>
