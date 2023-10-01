@@ -57,6 +57,24 @@ const handleSubmit = () => {
     : [inputValue.value];
   recordWordReq.send(words);
 };
+
+const handleUpload = () => {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".txt";
+  input.onchange = (e) => {
+    const target = e.target as HTMLInputElement;
+    const file = target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result as string;
+      inputValue.value = result;
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+};
 </script>
 
 <template>
@@ -66,16 +84,22 @@ const handleSubmit = () => {
     <div class="px-4 pb-4 flex flex-col">
       <NInput
         v-model:value="inputValue"
-        type="textarea"
         placeholder="请输入单词(们?)"
+        type="textarea"
+        :autosize="{
+          minRows: 3,
+          maxRows: 10,
+        }"
       />
-      <NButton
-        class="mt-3 self-end"
-        type="primary"
-        :loading="recordWordReq.loading.value"
-        @click="handleSubmit"
-        >提交</NButton
-      >
+      <div class="mt-3 flex justify-end gap-3">
+        <NButton @click="handleUpload">选择文件</NButton>
+        <NButton
+          type="primary"
+          :loading="recordWordReq.loading.value"
+          @click="handleSubmit"
+          >提交</NButton
+        >
+      </div>
     </div>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useRequest } from "alova";
+import { invalidateCache, useRequest } from "alova";
 import { registerUser, loginUser } from "@/api/methods/user";
 import {
   FormInst,
@@ -67,6 +67,7 @@ loginReq.onSuccess(({ data }) => {
   message.success("登录成功!");
   const { accessToken } = data;
   userStore.updateAccessToken(accessToken);
+  invalidateCache();
   router.replace("/");
 });
 // 登录事件
@@ -81,12 +82,7 @@ const handleLogin = () => {
       <h1 class="text-2xl mb-3">登录</h1>
 
       <!-- 表单 -->
-      <n-form
-        ref="formRef"
-        :label-width="80"
-        :model="formValue"
-        :rules="rules"
-      >
+      <n-form ref="formRef" :label-width="80" :model="formValue" :rules="rules">
         <n-form-item label="用户名" path="username">
           <n-input
             v-model:value="formValue.username"
