@@ -1,9 +1,23 @@
 <script lang="ts" setup>
 import CommonHeader from "@/components/common-header.vue";
-import { NInput, NButton } from "naive-ui";
+import { NInput, NButton, useMessage } from "naive-ui";
 import { ref } from "vue";
+import { invalidateCache, useRequest } from "alova";
+import { recordWord, listMyWords } from "@/api/methods/word";
+
+const message = useMessage();
 
 const inputValue = ref("");
+
+const recordWordReq = useRequest(recordWord, { immediate: false });
+recordWordReq.onError((err) => {
+  message.error(err.error.message);
+});
+recordWordReq.onSuccess(() => {
+  message.success("添加成功");
+  inputValue.value = "";
+  invalidateCache(listMyWords());
+});
 
 /**
  * 统计字符串中出现频率最高的非字母字符
@@ -32,13 +46,14 @@ const getMostFrequentNonLetter = (str: string) => {
   return maxChar;
 };
 
-const submitLoading = ref(false);
 const handleSubmit = () => {
-  submitLoading.value = true;
+  if (inputValue.value.trim() === "") return message.warning("请输入单词");
+
+  const mostFrequentNonLetter = getMostFrequentNonLetter(inputValue.value);
   const words = inputValue.value
-    .split(getMostFrequentNonLetter(inputValue.value))
-    .map((word) => word.trim());
-  console.log(words);
+    .split(mostFrequentNonLetter)
+    .filter((word) => word.trim() !== "");
+  recordWordReq.send(words);
 };
 </script>
 
@@ -55,7 +70,7 @@ const handleSubmit = () => {
       <NButton
         class="mt-3 self-end"
         type="primary"
-        :loading="submitLoading"
+        :loading="recordWordReq.loading.value"
         @click="handleSubmit"
         >提交</NButton
       >

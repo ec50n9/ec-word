@@ -35,7 +35,6 @@ const registerReq = useRequest(
 );
 // 注册失败
 registerReq.onError((err) => {
-  console.log(err);
   dialog.error({
     title: "注册失败",
     content: err.error.message,
@@ -58,7 +57,6 @@ const loginReq = useRequest(
 );
 // 登录失败
 loginReq.onError((err) => {
-  console.log(err);
   dialog.error({
     title: "登录失败",
     content: err.error.message,
@@ -88,7 +86,6 @@ const handleLogin = () => {
         :label-width="80"
         :model="formValue"
         :rules="rules"
-        size="small"
       >
         <n-form-item label="用户名" path="username">
           <n-input

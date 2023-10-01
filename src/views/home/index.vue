@@ -1,19 +1,24 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { NButton, NIcon } from "naive-ui";
+import { NButton, NIcon, NSkeleton, NEmpty, NResult } from "naive-ui";
 import { PlusRound } from "@vicons/material";
+import { useRequest } from "alova";
+import { listMyWords } from "@/api/methods/word";
 
 const router = useRouter();
 
-const words = ["Hello, world", "bbb", "ccc"];
+const listMyWordsReq = useRequest(listMyWords(), {
+  initialData: Array.from({ length: 5 }, (_, i) => `word${i}`),
+});
+
 const currentWord = ref<string | null>(null);
 const currentWordInfo = ref<{
   word: string;
   meaning: string;
   example: string;
 }>({
-  word: "project",
+  word: "Project",
   meaning: "项目",
   example:
     "This is a project.This is a project.This is a project.This is a project.This is a project.This is a project.This is a project.",
@@ -56,23 +61,45 @@ const handleWordTouchEnd = (_e: TouchEvent, word: string) => {
         添加
       </n-button>
     </div>
-    <ul class="grow h-0 px-3 grid grid-cols-2 gap-2">
-      <li
-        v-for="word in words"
-        :key="word"
-        class="px-3 py-3 bg-white c-slate-7 rd-2 b select-none transition active:bg-slate-100 active:c-slate-9 active:scale-95"
-        @touchstart="(e) => handleWordTouchStart(e, word)"
-        @touchend="(e) => handleWordTouchEnd(e, word)"
-        @touchcancel="(e) => handleWordTouchEnd(e, word)"
-      >
-        {{ word }}
-      </li>
+
+    <!-- 单词列表 -->
+    <n-result
+      v-if="listMyWordsReq.error.value"
+      status="500"
+      title="加载失败"
+      :description="listMyWordsReq.error.value.message"
+    />
+
+    <n-empty v-else-if="listMyWordsReq.data.value.length === 0" />
+
+    <ul v-else class="grow h-0 px-3 grid grid-cols-2 gap-2">
+      <template v-if="listMyWordsReq.loading.value">
+        <n-skeleton
+          v-for="item in listMyWordsReq.data.value"
+          :key="item"
+          height="40px"
+          :sharp="false"
+        />
+      </template>
+
+      <template v-else>
+        <li
+          v-for="word in listMyWordsReq.data.value"
+          :key="word"
+          class="px-3 py-3 bg-white c-slate-7 rd-2 b select-none transition active:bg-slate-100 active:c-slate-9 active:scale-95"
+          @touchstart="(e) => handleWordTouchStart(e, word)"
+          @touchend="(e) => handleWordTouchEnd(e, word)"
+          @touchcancel="(e) => handleWordTouchEnd(e, word)"
+        >
+          {{ word }}
+        </li>
+      </template>
     </ul>
 
     <!-- 弹窗 -->
     <div
       class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 transition"
-      :class="{ 'scale-0 pointer-events-none': !currentWord }"
+      :class="{ 'scale-90 op-0 pointer-events-none': !currentWord }"
     >
       <div class="px-5 py-3 bg-white c-slate-7 rd-3 shadow">
         <h2 class="text-xl">{{ currentWordInfo.word }}</h2>
