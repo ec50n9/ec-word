@@ -50,15 +50,17 @@ const handleSubmit = () => {
   if (inputValue.value.trim() === "") return message.warning("请输入单词");
 
   const mostFrequentNonLetter = getMostFrequentNonLetter(inputValue.value);
-  const words = inputValue.value
-    .split(mostFrequentNonLetter)
-    .filter((word) => word.trim() !== "");
+  const words = mostFrequentNonLetter
+    ? inputValue.value
+        .split(mostFrequentNonLetter)
+        .filter((word) => word.trim() !== "")
+    : [inputValue.value];
   recordWordReq.send(words);
 };
 </script>
 
 <template>
-  <div class="">
+  <div class="w-full min-h-screen bg-slate-1">
     <CommonHeader title="添加单词" />
 
     <div class="px-4 pb-4 flex flex-col">

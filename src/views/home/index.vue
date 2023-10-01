@@ -53,7 +53,7 @@ const handleWordTouchEnd = (_e: TouchEvent, word: string) => {
 </script>
 
 <template>
-  <div class="flex flex-col">
+  <div class="w-full min-h-screen flex flex-col bg-slate-1">
     <div class="shrink-0 px-5 pt-5 pb-4 flex items-center justify-between">
       <h1 class="text-2xl c-slate-7">松叶</h1>
       <n-button
@@ -79,30 +79,32 @@ const handleWordTouchEnd = (_e: TouchEvent, word: string) => {
 
     <n-empty v-else-if="listMyWordsReq.data.value.length === 0" />
 
-    <ul v-else class="grow h-0 px-3 grid grid-cols-2 gap-2">
-      <template v-if="listMyWordsReq.loading.value">
-        <n-skeleton
-          v-for="item in listMyWordsReq.data.value"
-          :key="item"
-          height="40px"
-          :sharp="false"
-        />
-      </template>
+    <div v-else class="grow h-0 px-3 pb-3 of-auto">
+      <ul class="grid grid-cols-2 gap-2">
+        <template v-if="listMyWordsReq.loading.value">
+          <n-skeleton
+            v-for="item in listMyWordsReq.data.value"
+            :key="item"
+            height="40px"
+            :sharp="false"
+          />
+        </template>
 
-      <template v-else>
-        <li
-          v-for="word in listMyWordsReq.data.value"
-          :key="word"
-          class="px-3 py-3 bg-white c-slate-7 rd-2 b select-none transition active:bg-slate-100 active:c-slate-9 active:scale-95"
-          @touchstart="(e) => handleWordTouchStart(e, word)"
-          @touchmove="(e) => handleWordTouchMove(e)"
-          @touchend="(e) => handleWordTouchEnd(e, word)"
-          @touchcancel="(e) => handleWordTouchEnd(e, word)"
-        >
-          {{ word }}
-        </li>
-      </template>
-    </ul>
+        <template v-else>
+          <li
+            v-for="word in listMyWordsReq.data.value"
+            :key="word"
+            class="px-3 py-3 bg-white c-slate-7 rd-2 b select-none transition active:bg-slate-100 active:c-slate-9 active:scale-95"
+            @touchstart="(e) => handleWordTouchStart(e, word)"
+            @touchmove="(e) => handleWordTouchMove(e)"
+            @touchend="(e) => handleWordTouchEnd(e, word)"
+            @touchcancel="(e) => handleWordTouchEnd(e, word)"
+          >
+            {{ word }}
+          </li>
+        </template>
+      </ul>
+    </div>
 
     <!-- 弹窗 -->
     <div

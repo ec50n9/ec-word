@@ -7,7 +7,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div>
+  <div class="w-full min-h-screen bg-slate-1">
     <CommonHeader :title="props.word" />
 
     <div class="px-3 pb-3">这里是单词详情</div>

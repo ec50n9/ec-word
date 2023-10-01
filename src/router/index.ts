@@ -17,4 +17,11 @@ const router = createRouter({
   routes,
 });
 
+router.afterEach((to, from) => {
+  const toDepth = to.path.split("/").filter((char) => char).length;
+  const fromDepth = from.path.split("/").filter((char) => char).length;
+  if (toDepth === fromDepth) to.meta.transition = "fade";
+  else to.meta.transition = toDepth < fromDepth ? "slide-right" : "slide-left";
+});
+
 export default router;

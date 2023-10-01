@@ -76,7 +76,7 @@ const handleLogin = () => {
 </script>
 
 <template>
-  <div class="h-screen pt-20">
+  <div class="w-full min-h-screen pt-20 bg-slate-1">
     <div class="px-5 py-4 mx-5 bg-white rd-3 shadow">
       <h1 class="text-2xl mb-3">登录</h1>
 
