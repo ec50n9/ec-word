@@ -109,7 +109,7 @@ const handleWordTouchEnd = (_e: TouchEvent, word: string) => {
       class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 transition"
       :class="{ 'scale-90 op-0 pointer-events-none': !currentWord }"
     >
-      <div class="px-5 py-3 bg-white c-slate-7 rd-3 shadow">
+      <div class="px-5 py-3 bg-white c-slate-7 rd-3 shadow select-none">
         <h2 class="text-xl">{{ currentWordInfo.word }}</h2>
         <p class="mt-2">{{ currentWordInfo.meaning }}</p>
         <p class="mt-1">{{ currentWordInfo.example }}</p>
