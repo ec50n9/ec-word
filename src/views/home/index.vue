@@ -1,11 +1,13 @@
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { onMounted, ref } from "vue";
+import { onBeforeRouteLeave, useRouter } from "vue-router";
 import { NButton, NIcon, NSwitch, NSkeleton, NEmpty, NResult } from "naive-ui";
 import { PlusRound, VolumeUpTwotone } from "@vicons/material";
 import { useRequest } from "alova";
 import { WordSimpResp, listMyWords } from "@/api/methods/word";
+import { useAppStore } from "@/store/modules/app";
 
+const appStore = useAppStore();
 const router = useRouter();
 const audioBaseURL = "https://dict.youdao.com/dictvoice?audio=";
 
@@ -91,6 +93,29 @@ const useAudio = () => {
   };
 };
 const audio = useAudio();
+
+// 跳转页面前记录滚动位置
+const listRef = ref<HTMLDivElement>();
+onBeforeRouteLeave((_to, from, next) => {
+  appStore.updateScrollPositionCaches(from.path!, {
+    x: listRef.value?.scrollLeft || 0,
+    y: listRef.value?.scrollTop || 0,
+  });
+  next();
+});
+// 跳转页面后恢复滚动位置
+onMounted(() => {
+  const { x, y } = appStore.scrollPositionCaches[
+    router.currentRoute.value.path
+  ] || { x: 0, y: 0 };
+
+  setTimeout(() => {
+    listRef.value?.scrollTo({
+      left: x,
+      top: y,
+    });
+  });
+});
 </script>
 
 <template>
@@ -141,7 +166,7 @@ const audio = useAudio();
 
     <n-empty v-else-if="listMyWordsReq.data.value.length === 0" />
 
-    <div v-else class="grow h-0 px-3 pb-3 of-auto">
+    <div v-else ref="listRef" class="grow h-0 px-3 pb-3 of-auto">
       <ul class="grid grid-cols-2 gap-2">
         <template v-if="listMyWordsReq.loading.value">
           <n-skeleton
@@ -154,10 +179,10 @@ const audio = useAudio();
 
         <template v-else>
           <li
-            v-for="word in listMyWordsReq.data.value"
-            :key="word.word"
+            v-for="(word, index) in listMyWordsReq.data.value"
+            :key="index"
             class="px-3 py-3 bg-white c-slate-7 rd-2 b select-none transition active:bg-slate-100 active:c-slate-9 active:scale-95"
-            :class="{ 'b-emerald-5': word.detail, 'b-indigo-5': word.note }"
+            :class="{ 'b-emerald-4': word.detail, 'b-indigo-4': word.note }"
             @touchstart="(e) => handleWordTouchStart(e, word)"
             @touchmove="(e) => handleWordTouchMove(e)"
             @touchend="(e) => handleWordTouchEnd(e, word)"
