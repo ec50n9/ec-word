@@ -23,40 +23,63 @@ const wordDetailVisible = ref(false);
 // 发音类型
 const speechType = ref(true);
 
-// 长按的定时器
-let timeout: NodeJS.Timeout | null = null;
+// 双击定时器
+let doubleClickTimeout: NodeJS.Timeout | null = null;
 
+// 单词点击事件
+const handleWordClick = (word: WordSimpResp) => {
+  if (doubleClickTimeout) {
+    clearTimeout(doubleClickTimeout);
+    doubleClickTimeout = null;
+
+    // 双击事件
+    audio.set(
+      `${audioBaseURL}${word.word}&type=${speechType.value ? "2" : "1"}`
+    ); // us=2 uk=1
+  } else {
+    doubleClickTimeout = setTimeout(() => {
+      clearTimeout(doubleClickTimeout!);
+      doubleClickTimeout = null;
+
+      // 单击事件
+      router.push(`/words/${word.word}`);
+    }, 300);
+  }
+};
+
+// 长按的定时器
+let longClickTimeout: NodeJS.Timeout | null = null;
+
+// 单词触摸开始
 const handleWordTouchStart = (_e: TouchEvent, word: WordSimpResp) => {
-  timeout = setTimeout(() => {
+  longClickTimeout = setTimeout(() => {
+    clearTimeout(longClickTimeout!);
+    longClickTimeout = null;
+
+    // 长按事件
     currentWord.value = word;
     wordDetailVisible.value = true;
-    clearTimeout(timeout!);
-    timeout = null;
   }, 300);
 };
 
+// 单词触摸移动
 const handleWordTouchMove = (_e: TouchEvent) => {
-  if (timeout) {
-    clearTimeout(timeout);
-    timeout = null;
+  if (longClickTimeout) {
+    clearTimeout(longClickTimeout);
+    longClickTimeout = null;
   }
 };
 
-const handleWordTouchEnd = (_e: TouchEvent, word: WordSimpResp) => {
-  if (timeout) {
-    clearTimeout(timeout);
-    timeout = null;
-    // 点击事件
-    if (word.detail) {
-      audio.set(
-        audioBaseURL +
-          (speechType.value ? word.detail?.usspeech : word.detail?.ukspeech)
-      );
-    } else {
-      router.push(`/words/${word.word}`);
-    }
+// 单词触摸结束
+const handleWordTouchEnd = (_e: TouchEvent, _word: WordSimpResp) => {
+  if (longClickTimeout) {
+    clearTimeout(longClickTimeout);
+    longClickTimeout = null;
   }
-  wordDetailVisible.value = false;
+  if (wordDetailVisible.value) {
+    wordDetailVisible.value = false;
+    return;
+  }
 };
 
 // 创建一个音频播放器
@@ -159,7 +182,7 @@ onMounted(() => {
         :loading="audio.loading.value"
       >
         <template #icon>
-          <n-icon><record-voice-over-twotone/></n-icon>
+          <n-icon><record-voice-over-twotone /></n-icon>
         </template>
         <template #checked>美</template>
         <template #unchecked>英</template>
@@ -207,6 +230,7 @@ onMounted(() => {
             :key="index"
             class="px-3 py-3 bg-white c-slate-7 rd-2 b select-none transition active:bg-slate-100 active:c-slate-9 active:scale-95"
             :class="{ 'b-emerald-4': word.detail, 'b-indigo-4': word.note }"
+            @click="handleWordClick(word)"
             @touchstart="(e) => handleWordTouchStart(e, word)"
             @touchmove="(e) => handleWordTouchMove(e)"
             @touchend="(e) => handleWordTouchEnd(e, word)"
