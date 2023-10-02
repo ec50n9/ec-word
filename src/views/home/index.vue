@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
+import { CSSProperties, onMounted, ref } from "vue";
 import { onBeforeRouteLeave, useRouter } from "vue-router";
 import { NButton, NIcon, NSwitch, NSkeleton, NEmpty, NResult } from "naive-ui";
-import { PlusRound, VolumeUpTwotone } from "@vicons/material";
+import { PlusRound, RecordVoiceOverTwotone } from "@vicons/material";
 import { useRequest } from "alova";
 import { WordSimpResp, listMyWords } from "@/api/methods/word";
 import { useAppStore } from "@/store/modules/app";
@@ -13,7 +13,7 @@ const audioBaseURL = "https://dict.youdao.com/dictvoice?audio=";
 
 // 获取单词列表
 const listMyWordsReq = useRequest(listMyWords(), {
-  initialData: Array.from({ length: 5 }, (_, i) => `word${i}`),
+  initialData: Array.from({ length: 11 }, (_, i) => `word${i}`),
 });
 
 // 当前查看的单词
@@ -94,6 +94,29 @@ const useAudio = () => {
 };
 const audio = useAudio();
 
+// 语音类型切换的背景色
+const railStyle = ({
+  focused,
+  checked,
+}: {
+  focused: boolean;
+  checked: boolean;
+}) => {
+  const style: CSSProperties = {};
+  if (checked) {
+    style.background = "#ef4444";
+    if (focused) {
+      style.boxShadow = "0 0 0 2px #d0305040";
+    }
+  } else {
+    style.background = "#2080f0";
+    if (focused) {
+      style.boxShadow = "0 0 0 2px #2080f040";
+    }
+  }
+  return style;
+};
+
 // 跳转页面前记录滚动位置
 const listRef = ref<HTMLDivElement>();
 onBeforeRouteLeave((_to, from, next) => {
@@ -130,12 +153,13 @@ onMounted(() => {
       <n-switch
         class="shrink-0"
         v-model:value="speechType"
-        :round="true"
+        :round="false"
         size="large"
+        :rail-style="railStyle"
         :loading="audio.loading.value"
       >
         <template #icon>
-          <n-icon><volume-up-twotone /></n-icon>
+          <n-icon><record-voice-over-twotone/></n-icon>
         </template>
         <template #checked>美</template>
         <template #unchecked>英</template>

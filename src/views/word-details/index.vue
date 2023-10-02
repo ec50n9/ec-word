@@ -36,7 +36,7 @@ const handleCreated = (editor: any) => {
     <CommonHeader :title="props.word" />
 
     <div class="px-3 pb-3">
-      <Toolbar
+      <!-- <Toolbar
         style="border-bottom: 1px solid #ccc"
         :editor="editorRef"
         :defaultConfig="toolbarConfig"
@@ -48,7 +48,7 @@ const handleCreated = (editor: any) => {
         :defaultConfig="editorConfig"
         :mode="mode"
         @onCreated="handleCreated"
-      />
+      /> -->
     </div>
   </div>
 </template>
