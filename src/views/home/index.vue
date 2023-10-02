@@ -1,7 +1,15 @@
 <script lang="ts" setup>
 import { CSSProperties, onMounted, ref } from "vue";
 import { onBeforeRouteLeave, useRouter } from "vue-router";
-import { NButton, NIcon, NSwitch, NSkeleton, NEmpty, NResult } from "naive-ui";
+import {
+  NButton,
+  NIcon,
+  NSwitch,
+  NSkeleton,
+  NEmpty,
+  NResult,
+  NModal,
+} from "naive-ui";
 import { PlusRound, RecordVoiceOverTwotone } from "@vicons/material";
 import { useRequest } from "alova";
 import { WordSimpResp, listMyWords } from "@/api/methods/word";
@@ -15,6 +23,15 @@ const audioBaseURL = "https://dict.youdao.com/dictvoice?audio=";
 // 获取单词列表
 const listMyWordsReq = useRequest(listMyWords(), {
   initialData: Array.from({ length: 11 }, (_, i) => `word${i}`),
+});
+
+// 引导弹窗
+const guideModalVisible = ref(false);
+listMyWordsReq.onSuccess(() => {
+  if (appStore.firstOpen) {
+    guideModalVisible.value = true;
+    appStore.updateFirstOpen(false);
+  }
 });
 
 // 当前查看的单词
@@ -174,10 +191,12 @@ onMounted(() => {
     <!-- 顶部栏 -->
     <div
       class="shrink-0 px-5 pt-5 pb-3 flex items-center justify-between gap-3 z-10 transition"
-      :class="{ 'shadow': scrollTop > 0 }"
+      :class="{ shadow: scrollTop > 0 }"
     >
       <!-- 标题 -->
-      <h1 class="grow text-2xl c-slate-7">松叶</h1>
+      <h1 class="grow text-2xl c-slate-7" @click="guideModalVisible = true">
+        😡 狠狠记单词
+      </h1>
 
       <!-- 播放器 -->
       <n-switch
@@ -255,12 +274,58 @@ onMounted(() => {
       </ul>
     </div>
 
-    <!-- 弹窗 -->
+    <!-- 单词弹窗 -->
     <div
       class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 transition"
       :class="{ 'scale-90 op-0 pointer-events-none': !wordDetailVisible }"
     >
       <word-dialog :current-word="currentWord" />
     </div>
+
+    <!-- 使用引导弹窗 -->
+    <n-modal
+      v-model:show="guideModalVisible"
+      preset="dialog"
+      :show-icon="false"
+      title="🤚 桥豆麻袋！"
+      positive-text="👌 ok，我懂"
+    >
+      <p class="text-base">
+        😠 这里是你的
+        <span class="text-lg font-bold">单词列表</span>
+        ，如果你看到的是空白的话，那说明你应该先点
+        <span class="text-xl c-orange">右上角</span> 添加一些单词进来。
+      </p>
+      <br />
+      <p class="text-base">🧑‍🏫 而这个列表只有几个简单的操作，麻烦记一下：</p>
+      <ul class="list-disc list-inside text-base">
+        <li>
+          👆 <span class="text-lg text-green font-bold">单击</span> 单词
+          <span class="text-blue text-lg">查看详情</span>
+        </li>
+        <li>
+          ✌️ <span class="text-2xl text-red">双击</span>
+          <span class="line-through">单词</span>
+          <span class="text-2xl font-bold text-orange">发音</span>
+        </li>
+        <li>
+          🦶 <span class="text-lg font-italic text-fuchsia">长按</span>
+          <span class="text-xs">单词</span>
+          <span class="text-3xl c-indigo">快速预览</span>
+        </li>
+      </ul>
+      <br />
+      <p class="text-base">
+        🤫 就这么多了，如果实在记不住
+        <span class="c-gray-4">(扶额、叹气、360度大幅度摇头)</span>
+        ，点击
+        <span class="text-xl c-red">左上角</span>
+        就可以再弹出来了，祝你使用愉...
+      </p>
+      <p class="text-base">🤔 emmm，即使不愉快的话也别投诉我🙄，拜拜 👋</p>
+      <p class="text-xs c-gray-1">
+        最终解释权归 <span class="c-gray-1">ec50n9</span> 所有（应该看不到吧）
+      </p>
+    </n-modal>
   </div>
 </template>
