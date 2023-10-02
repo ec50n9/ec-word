@@ -92,6 +92,9 @@ const splitedWords = computed(() => {
   if (inputValue.value.trim() === "" || !autoSplit.value) return [];
 
   const mostFrequentNonLetter = getMostFrequentNonLetter(inputValue.value);
+
+  if (mostFrequentNonLetter === "") return [inputValue.value];
+
   const words = inputValue.value
     .split(mostFrequentNonLetter)
     .map((word) => word.trim())
