@@ -82,7 +82,7 @@ export type WordSimpResp = {
   word: string;
   detail?: WordDetail;
   note?: string;
-}
+};
 
 export type WordDetail = Pick<
   Word,
@@ -93,9 +93,11 @@ export type WordDetail = Pick<
   | "ukspeech"
   | "picture"
   | "trans"
+  | "remMethod"
 >;
 
-export const listMyWords = () => commonAlova.Get<WordSimpResp[]>("/list-my-words");
+export const listMyWords = () =>
+  commonAlova.Get<WordSimpResp[]>("/list-my-words");
 
 export const queryWord = (word: string) =>
   commonAlova.Get<string>("/query-word", { params: { word } });
