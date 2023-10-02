@@ -21,9 +21,6 @@ const listMyWordsReq = useRequest(listMyWords(), {
 const currentWord = ref<WordSimpResp | null>(null);
 const wordDetailVisible = ref(false);
 
-// 发音类型
-const speechType = ref(true);
-
 // 双击定时器
 let doubleClickTimeout: NodeJS.Timeout | null = null;
 
@@ -35,7 +32,7 @@ const handleWordClick = (word: WordSimpResp) => {
 
     // 双击事件
     audio.set(
-      `${audioBaseURL}${word.word}&type=${speechType.value ? "2" : "1"}`
+      `${audioBaseURL}${word.word}&type=${appStore.speechType ? "2" : "1"}`
     ); // us=2 uk=1
   } else {
     doubleClickTimeout = setTimeout(() => {
@@ -176,7 +173,8 @@ onMounted(() => {
       <!-- 播放器 -->
       <n-switch
         class="shrink-0"
-        v-model:value="speechType"
+        :value="appStore.speechType"
+        @update:value="appStore.updateSpeechType"
         :round="false"
         size="large"
         :rail-style="railStyle"
