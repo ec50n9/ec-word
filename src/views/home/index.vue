@@ -80,6 +80,13 @@ const handleWordTouchEnd = (_e: TouchEvent, _word: WordSimpResp) => {
   }
 };
 
+// 单词列表滚动事件
+const scrollTop = ref(0);
+const handleListScroll = (e: Event) => {
+  const target = e.target as HTMLDivElement;
+  scrollTop.value = target.scrollTop;
+};
+
 // 创建一个音频播放器
 const useAudio = () => {
   const audio = new Audio();
@@ -164,8 +171,10 @@ onMounted(() => {
 
 <template>
   <div class="w-full min-h-screen flex flex-col bg-slate-1">
+    <!-- 顶部栏 -->
     <div
-      class="shrink-0 px-5 pt-5 pb-4 flex items-center justify-between gap-3"
+      class="shrink-0 px-5 pt-5 pb-3 flex items-center justify-between gap-3 z-10 transition"
+      :class="{ 'shadow': scrollTop > 0 }"
     >
       <!-- 标题 -->
       <h1 class="grow text-2xl c-slate-7">松叶</h1>
@@ -212,7 +221,12 @@ onMounted(() => {
 
     <n-empty v-else-if="listMyWordsReq.data.value.length === 0" />
 
-    <div v-else ref="listRef" class="grow h-0 px-3 pb-3 of-auto">
+    <div
+      v-else
+      ref="listRef"
+      class="grow h-0 px-3 py-2 of-auto"
+      @scroll="handleListScroll"
+    >
       <ul class="grid grid-cols-2 gap-2">
         <template v-if="listMyWordsReq.loading.value">
           <n-skeleton
