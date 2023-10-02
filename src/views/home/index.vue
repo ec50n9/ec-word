@@ -157,6 +157,7 @@ const audio = useAudio();
             v-for="word in listMyWordsReq.data.value"
             :key="word.word"
             class="px-3 py-3 bg-white c-slate-7 rd-2 b select-none transition active:bg-slate-100 active:c-slate-9 active:scale-95"
+            :class="{ 'b-emerald-5': word.detail, 'b-indigo-5': word.note }"
             @touchstart="(e) => handleWordTouchStart(e, word)"
             @touchmove="(e) => handleWordTouchMove(e)"
             @touchend="(e) => handleWordTouchEnd(e, word)"
