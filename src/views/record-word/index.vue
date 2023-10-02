@@ -7,6 +7,7 @@ import {
   NDrawerContent,
   NIcon,
   NSwitch,
+  NSpace,
   useMessage,
 } from "naive-ui";
 import { ArrowForwardRound, ArrowDownwardRound } from "@vicons/material";
@@ -131,13 +132,24 @@ const handleUpload = () => {
 };
 
 // 上传单词记录
-const handleUploadRecord = () => {
+const handleUploadRecord = (onlySucc: boolean = false) => {
   let data = [];
   if (autoSplit.value) {
-    data = Array.from(batchQueryReq.data.value.values()).map((word) => ({
-      word: word._id,
-      wordId: word.wordId,
-    }));
+    if (onlySucc) {
+      data = splitedWords.value
+        .filter((word) => batchQueryReq.data.value?.has(word))
+        .map((word) => ({
+          word: word,
+          wordId: batchQueryReq.data.value.get(word)!.wordId,
+        }));
+    } else {
+      data = splitedWords.value.map((word) => {
+        const res: any = { word };
+        if (batchQueryReq.data.value?.has(word))
+          res.wordId = batchQueryReq.data.value.get(word)!.wordId;
+        return res;
+      });
+    }
   } else {
     data = translateReq.data.value.map((word) => ({
       word: word.word,
@@ -179,20 +191,26 @@ const handleUploadRecord = () => {
     </div>
 
     <n-drawer v-model:show="drawerVisible" placement="bottom" height="90%">
-      <n-drawer-content header-style="display:block;">
-        <template #header>
-          <div class="flex justify-between items-center">
-            <span>翻译结果</span>
+      <n-drawer-content title="翻译结果" closable>
+        <template #footer>
+          <n-space>
             <n-button
-              class="self-end"
+              size="medium"
+              :loading="recordWordReq.loading.value"
+              @click="handleUploadRecord(true)"
+            >
+              仅添加已翻译的
+            </n-button>
+
+            <n-button
               size="medium"
               type="primary"
               :loading="recordWordReq.loading.value"
-              @click="handleUploadRecord"
+              @click="handleUploadRecord(false)"
             >
-              确认添加
+              全部添加
             </n-button>
-          </div>
+          </n-space>
         </template>
 
         <!-- 自动切割的单词翻译结果 -->

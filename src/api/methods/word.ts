@@ -115,7 +115,7 @@ export const batchQueryWord = (words: string[]) =>
     }
   );
 
-export const recordWord = (words: Object[]) =>
+export const recordWord = (words: object[]) =>
   commonAlova.Post("/record-word", { words });
 
 export const translate = (
