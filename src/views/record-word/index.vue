@@ -10,9 +10,14 @@ import {
   useMessage,
 } from "naive-ui";
 import { ArrowForwardRound, ArrowDownwardRound } from "@vicons/material";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { invalidateCache, useRequest } from "alova";
-import { recordWord, listMyWords, translate } from "@/api/methods/word";
+import {
+  recordWord,
+  listMyWords,
+  translate,
+  batchQueryWord,
+} from "@/api/methods/word";
 
 const message = useMessage();
 
@@ -36,6 +41,15 @@ translateReq.onError((err) => {
   message.error(err.error.message);
 });
 translateReq.onSuccess((_res) => {
+  drawerVisible.value = true;
+});
+
+// 批量查询单词接口
+const batchQueryReq = useRequest(batchQueryWord, { immediate: false });
+batchQueryReq.onError((err) => {
+  message.error(err.error.message);
+});
+batchQueryReq.onSuccess((_res) => {
   drawerVisible.value = true;
 });
 
@@ -72,20 +86,30 @@ const getMostFrequentNonLetter = (str: string) => {
 // 是否自动分割
 const autoSplit = ref(true);
 
+// 单词列表
+const splitedWords = computed(() => {
+  if (inputValue.value.trim() === "" || !autoSplit.value) return [];
+
+  const mostFrequentNonLetter = getMostFrequentNonLetter(inputValue.value);
+  const words = inputValue.value
+    .split(mostFrequentNonLetter)
+    .map((word) => word.trim())
+    .filter((word) => word);
+  return words;
+});
+
 // 提交事件
 const handleTranslate = () => {
   if (inputValue.value.trim() === "") return message.warning("请输入单词");
 
-  const mostFrequentNonLetter =
-    autoSplit.value && getMostFrequentNonLetter(inputValue.value);
-  console.log(mostFrequentNonLetter);
-  const words = mostFrequentNonLetter
-    ? inputValue.value
-        .split(mostFrequentNonLetter)
-        .filter((word) => word.trim() !== "")
-    : [inputValue.value];
-  translateReq.send(words);
+  if (autoSplit.value) batchQueryReq.send(splitedWords.value);
+  else translateReq.send([inputValue.value]);
 };
+
+// 翻译按钮的加载状态
+const translateBtnLoading = computed(() =>
+  autoSplit.value ? batchQueryReq.loading.value : translateReq.loading.value
+);
 
 // 通过上传文件导入
 const handleUpload = () => {
@@ -151,7 +175,7 @@ const handleUploadRecord = () => {
               class="self-end"
               size="medium"
               type="primary"
-              :loading="recordWordReq.loading.value"
+              :loading="translateBtnLoading"
               @click="handleUploadRecord"
             >
               确认添加
@@ -161,16 +185,29 @@ const handleUploadRecord = () => {
 
         <!-- 自动切割的单词翻译结果 -->
         <ul v-if="autoSplit" class="flex flex-wrap gap-3">
-          <li
-            v-for="item in translateReq.data.value"
-            class="px-3 py-2 flex justify-between items-center gap-3 b rd-3"
-          >
-            <span>{{ item.word }}</span>
-            <n-icon class="text-lg c-gray-3">
-              <arrow-forward-round />
-            </n-icon>
-            <span>{{ item.translation }}</span>
-          </li>
+          <template v-for="item in splitedWords" :key="item">
+            <!-- 正常翻译结果 -->
+            <li
+              v-if="batchQueryReq.data.value?.has(item)"
+              class="px-3 py-2 flex justify-between items-center gap-3 b rd-3 bg-emerald-50 b-emerald-5 c-emerald-7"
+            >
+              <span>{{ item }}</span>
+              <n-icon class="text-lg c-emerald-6">
+                <arrow-forward-round />
+              </n-icon>
+              <span>{{
+                batchQueryReq.data.value
+                  .get(item)!
+                  .trans.map((tran) => tran.tranCn)
+                  .join("、")
+              }}</span>
+            </li>
+
+            <!-- 未翻译的 -->
+            <li v-else class="px-3 py-2 b rd-3 bg-red-50 b-red-2 c-red-7">
+              {{ item }}
+            </li>
+          </template>
         </ul>
 
         <!-- 整句翻译结果 -->
