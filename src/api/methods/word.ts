@@ -1,6 +1,6 @@
 import { commonAlova } from "..";
 
-type Word = {
+export type Word = {
   _id: string;
   wordId: string;
   speech: string;
@@ -78,7 +78,24 @@ type Word = {
   };
 };
 
-export const listMyWords = () => commonAlova.Get<string[]>("/list-my-words");
+export type WordSimpResp = {
+  word: string;
+  detail?: WordDetail;
+  note?: string;
+}
+
+export type WordDetail = Pick<
+  Word,
+  | "usphone"
+  | "ukphone"
+  | "speech"
+  | "usspeech"
+  | "ukspeech"
+  | "picture"
+  | "trans"
+>;
+
+export const listMyWords = () => commonAlova.Get<WordSimpResp[]>("/list-my-words");
 
 export const queryWord = (word: string) =>
   commonAlova.Get<string>("/query-word", { params: { word } });

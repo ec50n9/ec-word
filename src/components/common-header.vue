@@ -10,7 +10,7 @@ const props = defineProps<{
 <template>
   <header class="p-4 flex items-center gap-3">
     <div
-      class="flex items-center justify-center w-14 h-14 b-2 b-slate-3 rd-3"
+      class="flex items-center justify-center w-12 h-12 b-2 b-slate-3 rd-3"
       @click="$router.back()"
     >
       <Icon class="text-xl c-slate-3">

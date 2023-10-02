@@ -171,7 +171,7 @@ const handleUploadRecord = () => {
         <NButton
           class="shrink-0"
           type="primary"
-          :loading="translateReq.loading.value"
+          :loading="translateBtnLoading"
           @click="handleTranslate"
           >开始翻译</NButton
         >
@@ -187,7 +187,7 @@ const handleUploadRecord = () => {
               class="self-end"
               size="medium"
               type="primary"
-              :loading="translateBtnLoading"
+              :loading="recordWordReq.loading.value"
               @click="handleUploadRecord"
             >
               确认添加
