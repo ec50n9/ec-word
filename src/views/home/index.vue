@@ -6,6 +6,7 @@ import { PlusRound, RecordVoiceOverTwotone } from "@vicons/material";
 import { useRequest } from "alova";
 import { WordSimpResp, listMyWords } from "@/api/methods/word";
 import { useAppStore } from "@/store/modules/app";
+import WordDialog from "./components/word-dialog.vue";
 
 const appStore = useAppStore();
 const router = useRouter();
@@ -228,8 +229,8 @@ onMounted(() => {
           <li
             v-for="(word, index) in listMyWordsReq.data.value"
             :key="index"
-            class="px-3 py-3 bg-white c-slate-7 rd-2 b select-none transition active:bg-slate-100 active:c-slate-9 active:scale-95"
-            :class="{ 'b-emerald-4': word.detail, 'b-indigo-4': word.note }"
+            class="px-3 py-3 bg-white c-slate-7 rd-2 b-2 select-none transition active:bg-slate-100 active:c-slate-9 active:scale-95"
+            :class="{ 'b-emerald-2': word.detail, 'b-indigo-2': word.note }"
             @click="handleWordClick(word)"
             @touchstart="(e) => handleWordTouchStart(e, word)"
             @touchmove="(e) => handleWordTouchMove(e)"
@@ -247,17 +248,7 @@ onMounted(() => {
       class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 transition"
       :class="{ 'scale-90 op-0 pointer-events-none': !wordDetailVisible }"
     >
-      <div class="px-5 py-3 bg-white c-slate-7 rd-3 shadow select-none">
-        <h2 class="text-xl">{{ currentWord?.word }}</h2>
-        <p v-if="currentWord?.detail?.trans[0]" class="mt-2">
-          <span class="px-2 bg-indigo-1 c-indigo-7 rd-1">{{
-            currentWord?.detail?.trans[0].pos
-          }}</span>
-          <span class="inline-block ml-1">{{
-            currentWord?.detail?.trans[0].tranCn
-          }}</span>
-        </p>
-      </div>
+      <word-dialog :current-word="currentWord" />
     </div>
   </div>
 </template>
