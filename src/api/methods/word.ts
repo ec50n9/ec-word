@@ -2,6 +2,7 @@ import { commonAlova } from "..";
 
 type Word = {
   _id: string;
+  wordId: string;
   speech: string;
   usphone: string;
   usspeech: string;
@@ -97,7 +98,7 @@ export const batchQueryWord = (words: string[]) =>
     }
   );
 
-export const recordWord = (words: string[]) =>
+export const recordWord = (words: Object[]) =>
   commonAlova.Post("/record-word", { words });
 
 export const translate = (

@@ -132,7 +132,19 @@ const handleUpload = () => {
 
 // 上传单词记录
 const handleUploadRecord = () => {
-  recordWordReq.send(translateReq.data.value.map((item) => item.word));
+  let data = [];
+  if (autoSplit.value) {
+    data = Array.from(batchQueryReq.data.value.values()).map((word) => ({
+      word: word._id,
+      wordId: word.wordId,
+    }));
+  } else {
+    data = translateReq.data.value.map((word) => ({
+      word: word.word,
+      note: word.translation,
+    }));
+  }
+  recordWordReq.send(data);
 };
 </script>
 
