@@ -130,11 +130,15 @@ export const translate = (
     "/translate",
     { query, from, to },
     {
-      transformData(data, headers) {
+      transformData(data, _headers) {
+        // @ts-ignore
         const query = data.data.query.split("\n").map((item) => item.trim());
+        // @ts-ignore
         const result = data.data.translation[0]
           .split("\n")
+          // @ts-ignore
           .map((item) => item.trim());
+        // @ts-ignore
         return query.map((q, i) => ({ word: q, translation: result[i] }));
       },
     }

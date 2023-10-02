@@ -8,7 +8,7 @@ import { NDialogProvider, NMessageProvider } from "naive-ui";
     <n-message-provider placement="top">
       <main class="h-screen of-y-auto bg-slate-1 c-slate-7 select-none">
         <router-view v-slot="{ Component, route }">
-          <transition :name="route.meta.transition || 'fade'">
+          <transition :name="route.meta.transition as string || 'fade'">
             <component :is="Component" />
           </transition>
         </router-view>
