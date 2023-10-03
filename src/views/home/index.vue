@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { CSSProperties, Component, h, onMounted, ref } from "vue";
+import { CSSProperties, Component, h, onMounted, ref, watch } from "vue";
 import { onBeforeRouteLeave, useRouter } from "vue-router";
 import {
   NButton,
@@ -176,6 +176,17 @@ const railStyle = ({
   return style;
 };
 
+watch(
+  () => appStore.speechType,
+  () => {
+    if (appStore.speechType) {
+      message.info("🇺🇸 美式发音", { showIcon: false });
+    } else {
+      message.info("🇬🇧 英式发音", { showIcon: false });
+    }
+  }
+);
+
 const renderIcon = (icon: Component) => () =>
   h(NIcon, null, { default: () => h(icon) });
 
@@ -194,6 +205,37 @@ const dropdownOptions: CustomDropdownOption[] = [
     icon: renderIcon(TranslateRound),
   },
   {
+    type: "divider",
+    key: "d0",
+  },
+  {
+    label: "发音",
+    key: "speech",
+    icon: renderIcon(RecordVoiceOverTwotone),
+    children: [
+      {
+        label: "美式发音",
+        key: "us",
+        icon: () => h("span", null, "🇺🇸"),
+        onClick: () => {
+          appStore.updateSpeechType(true);
+        },
+      },
+      {
+        label: "英式发音",
+        key: "uk",
+        icon: () => h("span", null, "🇬🇧"),
+        onClick: () => {
+          appStore.updateSpeechType(false);
+        },
+      },
+    ],
+  },
+  {
+    type: "divider",
+    key: "d1",
+  },
+  {
     label: "词库管理",
     key: "word-library",
     icon: renderIcon(LibraryBooksRound),
@@ -202,6 +244,10 @@ const dropdownOptions: CustomDropdownOption[] = [
     label: "规则管理",
     key: "rule-management",
     icon: renderIcon(AutoAwesomeRound),
+  },
+  {
+    type: "divider",
+    key: "d1",
   },
   {
     label: "退出登录",
@@ -294,7 +340,7 @@ onMounted(() => {
         size="large"
         @select="handleDropdownSelect"
       >
-        <n-button strong secondary type="primary"> 配置 </n-button>
+        <n-button strong secondary type="primary">功能</n-button>
       </n-dropdown>
     </div>
 
