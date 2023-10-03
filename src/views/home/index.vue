@@ -30,7 +30,6 @@ const guideModalVisible = ref(false);
 listMyWordsReq.onSuccess(() => {
   if (appStore.firstOpen) {
     guideModalVisible.value = true;
-    appStore.updateFirstOpen(false);
   }
 });
 
@@ -289,6 +288,7 @@ onMounted(() => {
       :show-icon="false"
       title="🤚 桥豆麻袋！"
       positive-text="👌 ok，我懂"
+      @positive-click="() => appStore.updateFirstOpen(false)"
     >
       <p class="text-base">
         😠 这里是你的
