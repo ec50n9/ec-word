@@ -95,10 +95,11 @@ const splitedWords = computed(() => {
 
   if (mostFrequentNonLetter === "") return [inputValue.value];
 
-  const words = inputValue.value
+  let words = inputValue.value
     .split(mostFrequentNonLetter)
     .map((word) => word.trim())
     .filter((word) => word);
+  words = Array.from(new Set(words));
   return words;
 });
 
