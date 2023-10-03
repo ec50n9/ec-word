@@ -1,15 +1,37 @@
 <script lang="ts" setup>
-import { CSSProperties, onMounted, ref } from "vue";
+import { CSSProperties, Component, h, onMounted, ref } from "vue";
 import { onBeforeRouteLeave, useRouter } from "vue-router";
-import { NButton, NIcon, NSwitch, NSkeleton, NEmpty, NResult } from "naive-ui";
-import { PlusRound, RecordVoiceOverTwotone } from "@vicons/material";
+import {
+  NButton,
+  NIcon,
+  NSwitch,
+  NSkeleton,
+  NEmpty,
+  NResult,
+  NDropdown,
+  useMessage,
+  DropdownOption,
+  useDialog,
+} from "naive-ui";
+import {
+  PlusRound,
+  RecordVoiceOverTwotone,
+  LogOutRound,
+  LibraryBooksRound,
+  AutoAwesomeRound,
+  TranslateRound,
+} from "@vicons/material";
 import { useRequest } from "alova";
 import { WordSimpResp, listMyWords } from "@/api/methods/word";
 import { useAppStore } from "@/store/modules/app";
+import { useUserStore } from "@/store/modules/user";
 import WordDialog from "./components/word-dialog.vue";
 import GuideModal from "./components/guide-modal.vue";
 
 const appStore = useAppStore();
+const userStore = useUserStore();
+const message = useMessage();
+const dialog = useDialog();
 const router = useRouter();
 const audioBaseURL = "https://dict.youdao.com/dictvoice?audio=";
 
@@ -154,6 +176,63 @@ const railStyle = ({
   return style;
 };
 
+const renderIcon = (icon: Component) => () =>
+  h(NIcon, null, { default: () => h(icon) });
+
+// 配置下拉菜单
+type CustomDropdownOption = DropdownOption & { onClick?: () => void };
+const dropdownOptions: CustomDropdownOption[] = [
+  {
+    label: "添加单词",
+    key: "add-word",
+    icon: renderIcon(PlusRound),
+    onClick: () => router.push("/record-word"),
+  },
+  {
+    label: "翻译",
+    key: "translate",
+    icon: renderIcon(TranslateRound),
+  },
+  {
+    label: "词库管理",
+    key: "word-library",
+    icon: renderIcon(LibraryBooksRound),
+  },
+  {
+    label: "规则管理",
+    key: "rule-management",
+    icon: renderIcon(AutoAwesomeRound),
+  },
+  {
+    label: "退出登录",
+    key: "logout",
+    icon: renderIcon(LogOutRound),
+    onClick: () => {
+      dialog.warning({
+        showIcon: false,
+        title: "🥹 能和你交流一下吗",
+        content:
+          "🚶‍♀️ 真的要走了吗？还会再回来吗？我们还会再见吗？你一定要幸福要开心啊...",
+        positiveText: "嗯",
+        negativeText: "手滑",
+        onNegativeClick() {
+          message.info("😚 斗晓得侬离不开鹅", { showIcon: false });
+        },
+        onPositiveClick() {
+          userStore.logout();
+          message.info("👋 拜拜了您嘞", { showIcon: false });
+        },
+      });
+    },
+  },
+];
+const handleDropdownSelect = (
+  _key: string | number,
+  option: CustomDropdownOption
+) => {
+  option.onClick?.();
+};
+
 // 跳转页面前记录滚动位置
 const listRef = ref<HTMLDivElement>();
 onBeforeRouteLeave((_to, from, next) => {
@@ -207,19 +286,16 @@ onMounted(() => {
         <template #unchecked>英</template>
       </n-switch>
 
-      <!-- 添加按钮 -->
-      <n-button
-        class="shrink-0"
-        strong
-        secondary
-        type="primary"
-        @click="$router.push('/record-word')"
+      <!-- 配置按钮 -->
+      <n-dropdown
+        trigger="click"
+        :options="dropdownOptions"
+        show-arrow
+        size="large"
+        @select="handleDropdownSelect"
       >
-        <template #icon>
-          <n-icon><plus-round /></n-icon>
-        </template>
-        添加
-      </n-button>
+        <n-button strong secondary type="primary"> 配置 </n-button>
+      </n-dropdown>
     </div>
 
     <!-- 单词列表 -->
