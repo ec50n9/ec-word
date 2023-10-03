@@ -163,12 +163,12 @@ const railStyle = ({
 }) => {
   const style: CSSProperties = {};
   if (checked) {
-    style.background = "#ef4444";
+    style.background = "#fca5a5";
     if (focused) {
       style.boxShadow = "0 0 0 2px #d0305040";
     }
   } else {
-    style.background = "#2080f0";
+    style.background = "#93c5fd";
     if (focused) {
       style.boxShadow = "0 0 0 2px #2080f040";
     }
@@ -328,8 +328,8 @@ onMounted(() => {
         <template #icon>
           <n-icon><record-voice-over-twotone /></n-icon>
         </template>
-        <template #checked>美</template>
-        <template #unchecked>英</template>
+        <template #checked>🇺🇸</template>
+        <template #unchecked>🇬🇧</template>
       </n-switch>
 
       <!-- 配置按钮 -->
