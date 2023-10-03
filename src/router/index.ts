@@ -10,6 +10,14 @@ const routes: RouteRecordRaw[] = [
   { path: "/words/:word", component: WordDetails, props: true },
   { path: "/record-word", component: RecordWord },
   { path: "/login", component: () => import("@/views/login/index.vue") },
+  {
+    path: "/word-source-management",
+    component: () => import("@/views/word-source-management/index.vue"),
+  },
+  {
+    path: "/rule-management",
+    component: () => import("@/views/rule-management/index.vue"),
+  },
 ];
 
 const router = createRouter({

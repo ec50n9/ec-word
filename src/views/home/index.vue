@@ -29,6 +29,7 @@ import { useAppStore } from "@/store/modules/app";
 import { useUserStore } from "@/store/modules/user";
 import WordDialog from "./components/word-dialog.vue";
 import GuideModal from "./components/guide-modal.vue";
+import CommonHeader from "@/components/common-header.vue";
 
 const appStore = useAppStore();
 const userStore = useUserStore();
@@ -238,14 +239,20 @@ const dropdownOptions: CustomDropdownOption[] = [
     key: "d1",
   },
   {
-    label: "词库管理",
-    key: "word-library",
+    label: "词源管理",
+    key: "word-source-management",
     icon: renderIcon(LibraryBooksRound),
+    onClick: () => {
+      router.push("/word-source-management");
+    },
   },
   {
     label: "规则管理",
     key: "rule-management",
     icon: renderIcon(AutoAwesomeRound),
+    onClick: () => {
+      router.push("/rule-management");
+    },
   },
   {
     type: "divider",
@@ -259,11 +266,11 @@ const dropdownOptions: CustomDropdownOption[] = [
       guideModalVisible.value = true;
     },
   },
-  {
-    label: "设置",
-    key: "setting",
-    icon: renderIcon(SettingsRound),
-  },
+  // {
+  //   label: "设置",
+  //   key: "setting",
+  //   icon: renderIcon(SettingsRound),
+  // },
   {
     label: "退出登录",
     key: "logout",
@@ -321,43 +328,41 @@ onMounted(() => {
 <template>
   <div class="w-full min-h-screen flex flex-col bg-slate-1">
     <!-- 顶部栏 -->
-    <div
-      class="shrink-0 px-5 pt-5 pb-3 flex items-center justify-between gap-3 z-10 transition"
-      :class="{ shadow: scrollTop > 0 }"
+    <common-header
+      title="😠 狠狠记单词"
+      :show-back="false"
+      :class="{ 'shadow': scrollTop > 0 }"
     >
-      <!-- 标题 -->
-      <h1 class="grow text-2xl c-slate-7" @click="guideModalVisible = true">
-        😡 狠狠记单词
-      </h1>
+      <div class="flex items-center gap-3">
+        <!-- 播放器 -->
+        <n-switch
+          class="shrink-0"
+          :value="appStore.speechType"
+          @update:value="appStore.updateSpeechType"
+          :round="false"
+          size="large"
+          :rail-style="railStyle"
+          :loading="audio.loading.value"
+        >
+          <template #icon>
+            <n-icon><record-voice-over-twotone /></n-icon>
+          </template>
+          <template #checked>🇺🇸</template>
+          <template #unchecked>🇬🇧</template>
+        </n-switch>
 
-      <!-- 播放器 -->
-      <n-switch
-        class="shrink-0"
-        :value="appStore.speechType"
-        @update:value="appStore.updateSpeechType"
-        :round="false"
-        size="large"
-        :rail-style="railStyle"
-        :loading="audio.loading.value"
-      >
-        <template #icon>
-          <n-icon><record-voice-over-twotone /></n-icon>
-        </template>
-        <template #checked>🇺🇸</template>
-        <template #unchecked>🇬🇧</template>
-      </n-switch>
-
-      <!-- 配置按钮 -->
-      <n-dropdown
-        trigger="click"
-        :options="dropdownOptions"
-        show-arrow
-        size="large"
-        @select="handleDropdownSelect"
-      >
-        <n-button strong secondary type="primary">功能</n-button>
-      </n-dropdown>
-    </div>
+        <!-- 配置按钮 -->
+        <n-dropdown
+          trigger="click"
+          :options="dropdownOptions"
+          show-arrow
+          size="large"
+          @select="handleDropdownSelect"
+        >
+          <n-button strong secondary type="primary">功能</n-button>
+        </n-dropdown>
+      </div>
+    </common-header>
 
     <!-- 单词列表 -->
     <n-result
