@@ -131,23 +131,21 @@ const handleWordBookClick = (_wordBook: WordBook) => {
   <div class="w-full h-full flex flex-col bg-slate-1">
     <!-- 顶部栏 -->
     <common-header title="词源管理">
-      <div>
-        <!-- 配置按钮 -->
-        <n-dropdown
-          trigger="click"
-          :options="dropdownOptions"
-          show-arrow
-          size="large"
-          @select="handleDropdownSelect"
+      <!-- 配置按钮 -->
+      <n-dropdown
+        trigger="click"
+        :options="dropdownOptions"
+        show-arrow
+        size="large"
+        @select="handleDropdownSelect"
+      >
+        <n-button strong secondary type="primary">
+          <template #icon>
+            <n-icon><plus-round /></n-icon>
+          </template>
+          添加</n-button
         >
-          <n-button strong secondary type="primary">
-            <template #icon>
-              <n-icon><plus-round /></n-icon>
-            </template>
-            添加</n-button
-          >
-        </n-dropdown>
-      </div>
+      </n-dropdown>
     </common-header>
 
     <!-- 词书列表 -->
