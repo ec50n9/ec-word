@@ -87,7 +87,7 @@ const handleCreateRule = () => {
   <div class="w-full h-full bg-slate-1">
     <common-header title="规则管理">
       <!-- 配置按钮 -->
-      <n-button strong secondary type="primary" @click="handleAddClick">
+      <n-button strong secondary round type="primary" @click="handleAddClick">
         <template #icon>
           <n-icon><plus-round /></n-icon>
         </template>

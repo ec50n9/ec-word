@@ -21,6 +21,7 @@ import {
   AutoAwesomeRound,
   TranslateRound,
   HelpRound,
+  MenuRound,
 } from "@vicons/material";
 import { useRequest } from "alova";
 import { WordSimpResp, listMyWords } from "@/api/methods/word";
@@ -356,7 +357,12 @@ onMounted(() => {
           size="large"
           @select="handleDropdownSelect"
         >
-          <n-button strong secondary type="primary">功能</n-button>
+          <n-button strong secondary round type="primary">
+            <template #icon>
+              <n-icon><menu-round /></n-icon>
+            </template>
+            菜单
+          </n-button>
         </n-dropdown>
       </div>
     </common-header>

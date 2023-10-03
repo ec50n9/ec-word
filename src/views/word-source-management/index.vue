@@ -139,7 +139,7 @@ const handleWordBookClick = (_wordBook: WordBook) => {
         size="large"
         @select="handleDropdownSelect"
       >
-        <n-button strong secondary type="primary">
+        <n-button strong secondary round type="primary">
           <template #icon>
             <n-icon><plus-round /></n-icon>
           </template>
