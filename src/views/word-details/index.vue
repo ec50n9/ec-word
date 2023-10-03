@@ -33,7 +33,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="w-full min-h-screen bg-slate-1">
-    <CommonHeader :title="': ' + props.word" />
+    <CommonHeader :title="props.word" />
 
     <div class="px-3 pb-3">
       <!-- <Toolbar
