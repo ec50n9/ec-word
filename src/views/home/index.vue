@@ -20,7 +20,6 @@ import {
   LibraryBooksRound,
   AutoAwesomeRound,
   TranslateRound,
-  SettingsRound,
   HelpRound,
 } from "@vicons/material";
 import { useRequest } from "alova";
@@ -39,9 +38,7 @@ const router = useRouter();
 const audioBaseURL = "https://dict.youdao.com/dictvoice?audio=";
 
 // 获取单词列表
-const listMyWordsReq = useRequest(listMyWords(), {
-  initialData: Array.from({ length: 11 }, (_, i) => `word${i}`),
-});
+const listMyWordsReq = useRequest(listMyWords);
 
 // 引导弹窗
 const guideModalVisible = ref(false);
@@ -331,7 +328,7 @@ onMounted(() => {
     <common-header
       title="😠 狠狠记单词"
       :show-back="false"
-      :class="{ 'shadow': scrollTop > 0 }"
+      :class="{ shadow: scrollTop > 0 }"
     >
       <div class="flex items-center gap-3">
         <!-- 播放器 -->
@@ -372,7 +369,7 @@ onMounted(() => {
       :description="listMyWordsReq.error.value.message"
     />
 
-    <n-empty v-else-if="listMyWordsReq.data.value.length === 0" />
+    <n-empty v-else-if="listMyWordsReq.data.value?.length === 0" />
 
     <div
       v-else
@@ -382,12 +379,7 @@ onMounted(() => {
     >
       <ul class="grid grid-cols-2 gap-2">
         <template v-if="listMyWordsReq.loading.value">
-          <n-skeleton
-            v-for="item in listMyWordsReq.data.value"
-            :key="item.word"
-            height="40px"
-            :sharp="false"
-          />
+          <n-skeleton :repeat="11" height="40px" :sharp="false" />
         </template>
 
         <template v-else>

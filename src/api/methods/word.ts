@@ -96,12 +96,15 @@ export type WordDetail = Pick<
   | "remMethod"
 >;
 
+// 获取我的单词列表
 export const listMyWords = () =>
   commonAlova.Get<WordSimpResp[]>("/list-my-words");
 
+// 翻译单词
 export const queryWord = (word: string) =>
   commonAlova.Get<string>("/query-word", { params: { word } });
 
+// 批量翻译单词
 export const batchQueryWord = (words: string[]) =>
   commonAlova.Post<Map<string, Word>>(
     "/batch-query-word",
@@ -117,9 +120,11 @@ export const batchQueryWord = (words: string[]) =>
     }
   );
 
+// 记录单词
 export const recordWord = (words: object[]) =>
   commonAlova.Post("/record-word", { words });
 
+// 有道翻译
 export const translate = (
   word: string | string[],
   from?: string,
@@ -144,3 +149,35 @@ export const translate = (
     }
   );
 };
+
+export type WordBook = {
+  _id: string;
+  title: string;
+  cover: string;
+  desc: string;
+  word_count: number;
+  file_size: number;
+  reciters_num: number;
+  book_id: string;
+  tags: string[];
+};
+
+// 获取词书列表
+export const listWordBooks = () =>
+  commonAlova.Get<WordBook[]>("/list-word-books", {
+    transformData(data: any, _headers) {
+      return data.data;
+    },
+  });
+
+// 用户绑定词书
+export const bindWordBook = (bookIds: string[]) =>
+  commonAlova.Post<{ data: boolean }>("/bind-word-book", { bookIds });
+
+// 用户取消绑定词书
+export const unbindWordBook = (bookIds: string[]) =>
+  commonAlova.Post<{ data: boolean }>("/unbind-word-book", { bookIds });
+
+// 获取用户已绑定的词书
+export const listMyWordBooks = () =>
+  commonAlova.Get<WordBook[]>("/list-my-word-books");
