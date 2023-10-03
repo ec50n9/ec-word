@@ -20,6 +20,8 @@ import {
   LibraryBooksRound,
   AutoAwesomeRound,
   TranslateRound,
+  SettingsRound,
+  HelpRound,
 } from "@vicons/material";
 import { useRequest } from "alova";
 import { WordSimpResp, listMyWords } from "@/api/methods/word";
@@ -248,6 +250,19 @@ const dropdownOptions: CustomDropdownOption[] = [
   {
     type: "divider",
     key: "d1",
+  },
+  {
+    label: "帮助",
+    key: "help",
+    icon: renderIcon(HelpRound),
+    onClick: () => {
+      guideModalVisible.value = true;
+    },
+  },
+  {
+    label: "设置",
+    key: "setting",
+    icon: renderIcon(SettingsRound),
   },
   {
     label: "退出登录",
