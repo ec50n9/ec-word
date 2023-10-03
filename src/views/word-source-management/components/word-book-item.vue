@@ -21,6 +21,7 @@ const emit = defineEmits<{
     :class="{
       'bg-white': !checked,
       'b-emerald-5 bg-emerald-50 scale-95': checked,
+      'b-blue-2': badge,
     }"
   >
     <!-- 封面 -->
@@ -62,6 +63,8 @@ const emit = defineEmits<{
       </div>
       <!-- 词书描述 -->
       <p class="mt-1 text-sm c-gray-4">{{ wordBook.desc }}</p>
+      <!-- 单词数量 -->
+      <p class="mt-1 text-sm c-gray-4">单词数量: {{ wordBook.word_count }}</p>
       <!-- 标签 -->
       <p class="mt-3 flex flex-wrap gap-x-3 gap-y-2">
         <n-tag

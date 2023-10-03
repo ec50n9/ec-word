@@ -369,7 +369,18 @@ onMounted(() => {
       :description="listMyWordsReq.error.value.message"
     />
 
-    <n-empty v-else-if="listMyWordsReq.data.value?.length === 0" />
+    <n-empty
+      v-else-if="listMyWordsReq.data.value?.length === 0"
+      class="mt-10"
+      description="不会吧不会吧，不会有人一个单词都没有吧？"
+      size="large"
+    >
+      <template #extra>
+        <n-button size="small" @click="dropdownOptions[0].onClick?.()">
+          🚪 前往添加
+        </n-button>
+      </template>
+    </n-empty>
 
     <div
       v-else
