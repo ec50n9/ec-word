@@ -31,8 +31,8 @@ const emit = defineEmits<{
         preview-disabled
       />
     </n-badge>
-    <div class="py-1 flex flex-col">
-      <div class="shrink-0 flex items-start text-lg">
+    <div class="grow py-1 flex flex-col">
+      <div class="shrink-0 flex justify-between items-start text-lg">
         <!-- 标题 -->
         <span>{{ wordBook.title }}</span>
         <!-- 删除 -->
