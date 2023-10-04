@@ -1,15 +1,19 @@
 import Home from "@/views/home/index.vue";
-import About from "@/views/about/index.vue";
-import WordDetails from "@/views/word-details/index.vue";
-import RecordWord from "@/views/record-word/index.vue";
 import { RouteRecordRaw, createRouter, createWebHashHistory } from "vue-router";
 import { useProviderStore } from "@/store/modules/provider";
 
 const routes: RouteRecordRaw[] = [
   { path: "/", component: Home },
-  { path: "/about", component: About },
-  { path: "/words/:word", component: WordDetails, props: true },
-  { path: "/record-word", component: RecordWord },
+  { path: "/about", component: () => import("@/views/about/index.vue") },
+  {
+    path: "/words/:word",
+    component: () => import("@/views/word-details/index.vue"),
+    props: true,
+  },
+  {
+    path: "/record-word",
+    component: () => import("@/views/record-word/index.vue"),
+  },
   { path: "/login", component: () => import("@/views/login/index.vue") },
   {
     path: "/word-source-management",

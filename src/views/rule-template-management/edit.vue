@@ -125,8 +125,8 @@ const actions = [
 type CustomDropdownOption = DropdownOption & { onClick?: () => void };
 const dropdownOptions: CustomDropdownOption[] = [
   {
-    label: "添加单词",
-    key: "add-word",
+    label: "暂无",
+    key: "none",
   },
 ];
 const handleDropdownSelect = (
@@ -170,11 +170,10 @@ const handleComplete = () => {
         size="large"
         @select="handleDropdownSelect"
       >
-        <n-button strong secondary round type="tertiary">
+        <n-button strong secondary circle type="tertiary">
           <template #icon>
             <n-icon><menu-round /></n-icon>
           </template>
-          菜单
         </n-button>
       </n-dropdown>
 
@@ -182,7 +181,7 @@ const handleComplete = () => {
       <n-button
         strong
         secondary
-        circle
+        round
         type="primary"
         :loading="updateRuleTemplateReq.loading.value"
         @click="handleComplete"
@@ -190,6 +189,7 @@ const handleComplete = () => {
         <template #icon>
           <n-icon><save-round /></n-icon>
         </template>
+        保存
       </n-button>
     </common-header>
 
