@@ -20,8 +20,8 @@ const emit = defineEmits<{
     class="p-3 flex items-start gap-3 b-2 rd-3 transition"
     :class="{
       'bg-white': !checked,
-      'b-emerald-5 bg-emerald-50 scale-95': checked,
-      'b-blue-2': badge,
+      'b-blue-5 bg-blue-50 scale-95': checked,
+      'b-blue-2 scale-95': badge,
     }"
   >
     <!-- 封面 -->
