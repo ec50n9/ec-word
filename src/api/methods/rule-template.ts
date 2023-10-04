@@ -6,15 +6,7 @@ export type RuleTemplate = {
   desc?: string;
   type: "review" | "learn" | "exam";
   public: boolean;
-  content: {
-    vars: {
-      name: string;
-      desc: string;
-      type: "string" | "number" | "boolean";
-      mapName: string;
-    }[];
-    code: string;
-  };
+  code: string;
 };
 
 export type RuleTemplateCreateForm = Pick<
@@ -30,3 +22,9 @@ export const listRuleTemplates = (type: "mine" | "public") =>
 
 export const deleteRuleTemplate = (ruleTemplateId: string) =>
   commonAlova.Delete("/delete-rule-template", { ruleTemplateId });
+
+export const getRuleTemplate = (ruleTemplateId: string) =>
+  commonAlova.Post<RuleTemplate>("/get-rule-template", { ruleTemplateId });
+
+export const updateRuleTemplate = (ruleTemplate: Partial<RuleTemplate>) =>
+  commonAlova.Post("/update-rule-template", ruleTemplate);

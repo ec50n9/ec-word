@@ -4,7 +4,14 @@ import CodeEditor from "./components/code-editor.vue";
 // @ts-ignore
 import * as monaco from "monaco-editor/esm/vs/editor/editor.main.js";
 import { Component as VueComponent, h, ref } from "vue";
-import { NIcon, DropdownOption, NButton, NDropdown } from "naive-ui";
+import {
+  NIcon,
+  DropdownOption,
+  NButton,
+  NDropdown,
+  useMessage,
+  NSkeleton,
+} from "naive-ui";
 import {
   MenuRound,
   UndoRound,
@@ -12,19 +19,35 @@ import {
   SaveRound,
   FormatPaintTwotone,
   KeyboardTabRound,
+  ArrowUpwardRound,
+  ArrowDownwardRound,
+  ArrowBackRound,
+  ArrowForwardRound,
 } from "@vicons/material";
+import {
+  getRuleTemplate,
+  updateRuleTemplate,
+} from "@/api/methods/rule-template";
+import { useRequest } from "alova";
+import { useRoute } from "vue-router";
+
+const router = useRoute();
+const message = useMessage();
+
+const { id } = router.query as { id: string };
 
 const codeEditor = ref<typeof CodeEditor | null>(null);
 
-const value = ref(`/**
- * @param {string} word
- * @param {object} userRecord
- * @param {Record<string, any>} vars
- */
-function filter(word, userRecord, vars) {
-  alert('Hello world!');
-}
-`);
+const value = ref("");
+
+// 获取模板请求
+const getRuleTemplateReq = useRequest(() => getRuleTemplate(id));
+getRuleTemplateReq.onError((err) => {
+  message.error(err.error.message);
+});
+getRuleTemplateReq.onSuccess((res) => {
+  value.value = res.data.code;
+});
 
 // 依赖编辑器上下文的操作
 const withEditor = (fn: (editor: typeof CodeEditor) => void) => () => {
@@ -39,6 +62,13 @@ const renderIcon = (icon: VueComponent) => () =>
   h(NIcon, null, { default: () => h(icon) });
 
 const actions = [
+  // 缩进
+  {
+    icon: renderIcon(KeyboardTabRound),
+    action: withEditor((editor) => {
+      editor.trigger("tab", "editor.action.indentLines", {});
+    }),
+  },
   // 撤销
   {
     icon: renderIcon(UndoRound),
@@ -53,11 +83,32 @@ const actions = [
       editor.trigger("redo", "redo", {});
     }),
   },
-  // 缩进
+  // 向上
   {
-    icon: renderIcon(KeyboardTabRound),
+    icon: renderIcon(ArrowUpwardRound),
     action: withEditor((editor) => {
-      editor.trigger("tab", "editor.action.indentLines", {});
+      editor.trigger("up", "cursorUp", {});
+    }),
+  },
+  // 向下
+  {
+    icon: renderIcon(ArrowDownwardRound),
+    action: withEditor((editor) => {
+      editor.trigger("down", "cursorDown", {});
+    }),
+  },
+  // 向左
+  {
+    icon: renderIcon(ArrowBackRound),
+    action: withEditor((editor) => {
+      editor.trigger("left", "cursorLeft", {});
+    }),
+  },
+  // 向右
+  {
+    icon: renderIcon(ArrowForwardRound),
+    action: withEditor((editor) => {
+      editor.trigger("right", "cursorRight", {});
     }),
   },
   // 格式化
@@ -85,16 +136,32 @@ const handleDropdownSelect = (
   option.onClick?.();
 };
 
+// 更新模板请求
+const updateRuleTemplateReq = useRequest(
+  () => updateRuleTemplate({ _id: id, code: value.value }),
+  { immediate: false }
+);
+updateRuleTemplateReq.onError((err) => {
+  message.error(err.error.message);
+});
+updateRuleTemplateReq.onSuccess((_res) => {
+  message.success("保存成功！");
+});
+
 // 完成按钮点击事件
 const handleComplete = () => {
-  console.log("完成");
+  updateRuleTemplateReq.send();
 };
 </script>
 
 <template>
   <div class="w-full h-full flex flex-col bg-slate-1 c-gray-7">
     <!-- 顶部栏 -->
-    <common-header class="bg-white" title="编辑模板" size="medium">
+    <common-header
+      class="bg-white"
+      :title="getRuleTemplateReq.data.value?.name || '编辑模板'"
+      size="medium"
+    >
       <!-- 菜单按钮 -->
       <n-dropdown
         trigger="click"
@@ -112,7 +179,14 @@ const handleComplete = () => {
       </n-dropdown>
 
       <!-- 完成按钮 -->
-      <n-button strong secondary circle type="info" @click="handleComplete">
+      <n-button
+        strong
+        secondary
+        circle
+        type="info"
+        :loading="updateRuleTemplateReq.loading.value"
+        @click="handleComplete"
+      >
         <template #icon>
           <n-icon><save-round /></n-icon>
         </template>
@@ -121,7 +195,15 @@ const handleComplete = () => {
 
     <!-- 内容 -->
     <div class="grow h-0">
+      <template v-if="getRuleTemplateReq.loading.value">
+        <div class="py-3 px-5">
+          <n-skeleton text size="medium" :repeat="5" />
+          <n-skeleton text size="medium" style="width: 60%" />
+        </div>
+      </template>
+
       <code-editor
+        v-else
         ref="codeEditor"
         class="w-full h-full"
         v-model:value="value"
@@ -129,9 +211,7 @@ const handleComplete = () => {
     </div>
 
     <!-- 快捷操作栏 -->
-    <ul
-      class="shrink-0 px-2 py-2 flex gap-2 bg-white b-t of-x-auto"
-    >
+    <ul class="shrink-0 px-2 py-2 flex gap-2 bg-white b-t of-x-auto">
       <n-button
         v-for="item in actions"
         :key="item.name"

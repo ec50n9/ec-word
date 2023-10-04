@@ -77,9 +77,7 @@ const handleCreateRuleTemplate = async () => {
 // 创建模板请求
 const createRuleTemplateReq = useRequest(
   () => createRuleTemplate(createRuleTemplateForm),
-  {
-    immediate: false,
-  }
+  { immediate: false }
 );
 createRuleTemplateReq.onError((err) => {
   message.error(err.error.message);
@@ -125,9 +123,7 @@ const handleRuleTemplateDelete = (ruleTemplate: RuleTemplate) => {
 const handleRuleTemplateClick = (ruleTemplate: RuleTemplate) => {
   router.push({
     path: "/rule-template-management/edit",
-    query: {
-      id: ruleTemplate._id,
-    },
+    query: { id: ruleTemplate._id },
   });
 };
 </script>
@@ -183,7 +179,7 @@ const handleRuleTemplateClick = (ruleTemplate: RuleTemplate) => {
     <n-modal
       v-model:show="createRuleTemplateModalVisible"
       preset="card"
-      title="创建规则"
+      title="创建规则模板"
       class="mx-5"
     >
       <!-- 表单 -->
