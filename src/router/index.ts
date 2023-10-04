@@ -3,6 +3,7 @@ import About from "@/views/about/index.vue";
 import WordDetails from "@/views/word-details/index.vue";
 import RecordWord from "@/views/record-word/index.vue";
 import { RouteRecordRaw, createRouter, createWebHashHistory } from "vue-router";
+import { useProviderStore } from "@/store/modules/provider";
 
 const routes: RouteRecordRaw[] = [
   { path: "/", component: Home },
@@ -33,7 +34,15 @@ const router = createRouter({
   routes,
 });
 
+router.beforeEach(() => {
+  // 加载条动画开始
+  useProviderStore().loadingBar?.start();
+});
+
 router.afterEach((to, from) => {
+  // 加载条动画结束
+  useProviderStore().loadingBar?.finish();
+
   const toDepth = to.path.split("/").filter((char) => char).length;
   const fromDepth = from.path.split("/").filter((char) => char).length;
   if (toDepth === fromDepth) to.meta.transition = "fade";

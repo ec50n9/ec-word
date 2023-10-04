@@ -183,7 +183,7 @@ const handleComplete = () => {
         strong
         secondary
         circle
-        type="info"
+        type="primary"
         :loading="updateRuleTemplateReq.loading.value"
         @click="handleComplete"
       >
