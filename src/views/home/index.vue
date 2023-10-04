@@ -22,7 +22,7 @@ import {
   TranslateRound,
   HelpRound,
   MenuRound,
-  SourceRound
+  SourceRound,
 } from "@vicons/material";
 import { useRequest } from "alova";
 import { WordSimpResp, listMyWords } from "@/api/methods/word";
@@ -73,7 +73,12 @@ const handleWordClick = (word: WordSimpResp) => {
       doubleClickTimeout = null;
 
       // 单击事件
-      router.push(`/words/${word.word}`);
+      router.push({
+        path: "/words/details",
+        query: {
+          id: word.word,
+        },
+      });
     }, 300);
   }
 };

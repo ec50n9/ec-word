@@ -6,9 +6,8 @@ const routes: RouteRecordRaw[] = [
   { path: "/", component: Home },
   { path: "/about", component: () => import("@/views/about/index.vue") },
   {
-    path: "/words/:word",
+    path: "/words/details",
     component: () => import("@/views/word-details/index.vue"),
-    props: true,
   },
   {
     path: "/record-word",
