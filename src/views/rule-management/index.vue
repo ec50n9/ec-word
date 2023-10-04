@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-import { createRule, listRules } from "@/api/methods/rule";
+import { createRule, deleteRule, listRules } from "@/api/methods/rule";
 import CommonHeader from "@/components/common-header.vue";
 import { PlusRound } from "@vicons/material";
 import { invalidateCache, useRequest } from "alova";
 import {
   NIcon,
   NButton,
-  NModal,
   NForm,
   NInput,
   NFormItem,
@@ -14,9 +13,16 @@ import {
   NEmpty,
   NSkeleton,
   useMessage,
+  NDrawer,
+  NDrawerContent,
+  NSelect,
+  NTabs,
+  NTabPane,
 } from "naive-ui";
-import { reactive, ref, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import RuleItem from "./components/rule-item.vue";
+import RuleTemplateItem from "@/views/rule-template-management/components/rule-template-item.vue";
+import { listRuleTemplates } from "@/api/methods/rule-template";
 
 const message = useMessage();
 
@@ -27,17 +33,19 @@ listRulesReq.onError((err) => {
 });
 
 // 创建规则弹窗
-const createRuleModalVisible = ref(false);
-watch(createRuleModalVisible, (val) => {
+const createRuleDrawerVisible = ref(false);
+watch(createRuleDrawerVisible, (val) => {
   if (val) {
     createRuleForm.name = "";
     createRuleForm.desc = "";
+    createRuleForm.templateId = null;
   }
 });
 const createRuleFormRef = ref<FormInst | null>(null);
 const createRuleForm = reactive({
   name: "",
   desc: "",
+  templateId: null as null | string,
 });
 const createRuleFormRules = {
   name: [
@@ -52,6 +60,54 @@ const createRuleFormRules = {
     },
   ],
   desc: [],
+  templateId: [
+    { required: true, message: "请选择规则模板", trigger: ["blur", "focus"] },
+  ],
+};
+
+// 加载规则模板列表请求
+const listRuleTemplatesReq = useRequest(listRuleTemplates, {
+  immediate: false,
+});
+listRuleTemplatesReq.onError((err) => {
+  message.error(err.error.message);
+});
+
+const ruleTemplateOptions = computed(() => {
+  return listRuleTemplatesReq.data.value?.map((item) => ({
+    label: item.name,
+    value: item._id,
+  }));
+});
+
+// 规则模板tabs
+const ruleTemplateTabs = [
+  {
+    name: "mine",
+    label: "我的",
+  },
+  {
+    name: "public",
+    label: "广场",
+  },
+];
+const currentRuleTemplateTab = ref(ruleTemplateTabs[0].name);
+watch(currentRuleTemplateTab, (val) => {
+  listRuleTemplatesReq.send(val);
+});
+
+// 规则模板选择drawer
+const ruleTemplateDrawerVisible = ref(false);
+watch(ruleTemplateDrawerVisible, (val) => {
+  if (val) {
+    listRuleTemplatesReq.send(currentRuleTemplateTab.value);
+  }
+});
+
+// 规则模板点击事件
+const handleRuleTemplateClick = (ruleTemplateId: string) => {
+  createRuleForm.templateId = ruleTemplateId;
+  ruleTemplateDrawerVisible.value = false;
 };
 
 // 创建规则请求
@@ -69,17 +125,35 @@ createRuleReq.onSuccess((_res) => {
   listRulesReq.send();
 
   // 关闭弹窗
-  createRuleModalVisible.value = false;
+  createRuleDrawerVisible.value = false;
 });
 
 // 点击添加按钮事件
 const handleAddClick = () => {
-  createRuleModalVisible.value = true;
+  createRuleDrawerVisible.value = true;
 };
 
 // 创建规则按钮事件
 const handleCreateRule = () => {
   createRuleFormRef.value?.validate().then(createRuleReq.send);
+};
+
+// 删除规则请求
+const deleteRuleReq = useRequest(deleteRule, { immediate: false });
+deleteRuleReq.onError((err) => {
+  message.error(err.error.message);
+});
+deleteRuleReq.onSuccess((_res) => {
+  message.success("删除成功");
+
+  // 刷新规则列表
+  invalidateCache(listRules());
+  listRulesReq.send();
+});
+
+// 删除规则事件
+const handleDeleteRule = (ruleId: string) => {
+  deleteRuleReq.send(ruleId);
 };
 </script>
 
@@ -107,14 +181,14 @@ const handleCreateRule = () => {
       <n-empty
         v-else-if="listRulesReq.data.value?.length === 0"
         class="mt-10"
-        description="啊？你怎么一个词源都没有，害！"
+        description="还没有规则呢"
         size="large"
       >
-        <!-- <template #extra>
-          <n-button size="small" @click="dropdownOptions[0].onClick?.()">
-            🤔 看看有啥词书先
+        <template #extra>
+          <n-button size="small" @click="handleAddClick">
+            🤔 新建一个
           </n-button>
-        </template> -->
+        </template>
       </n-empty>
 
       <template v-else>
@@ -123,50 +197,104 @@ const handleCreateRule = () => {
           v-for="item in listRulesReq.data.value"
           :key="item._id"
           :rule="item"
+          @delete="handleDeleteRule(item._id)"
         />
       </template>
     </ul>
 
     <!-- 创建规则弹窗 -->
-    <n-modal
-      v-model:show="createRuleModalVisible"
-      preset="card"
-      title="创建规则"
-      class="mx-5"
+    <n-drawer
+      v-model:show="createRuleDrawerVisible"
+      height="90%"
+      placement="bottom"
     >
-      <!-- 表单 -->
-      <n-form
-        ref="createRuleFormRef"
-        :model="createRuleForm"
-        :rules="createRuleFormRules"
-      >
-        <n-form-item label="规则名称" path="name">
-          <n-input
-            v-model:value="createRuleForm.name"
-            placeholder="请输入规则名称"
-          />
-        </n-form-item>
-        <n-form-item label="规则描述" path="desc">
-          <n-input
-            v-model:value="createRuleForm.desc"
-            placeholder="请输入规则描述"
-          />
-        </n-form-item>
-      </n-form>
+      <n-drawer-content title="创建规则" closable>
+        <!-- 表单 -->
+        <n-form
+          ref="createRuleFormRef"
+          :model="createRuleForm"
+          :rules="createRuleFormRules"
+        >
+          <n-form-item label="规则名称" path="name">
+            <n-input
+              v-model:value="createRuleForm.name"
+              placeholder="请输入规则名称"
+            />
+          </n-form-item>
+          <n-form-item label="规则描述" path="desc">
+            <n-input
+              v-model:value="createRuleForm.desc"
+              placeholder="请输入规则描述"
+            />
+          </n-form-item>
+          <n-form-item label="规则模板" path="templateId">
+            <n-select
+              placeholder="请选择规则模板"
+              v-model:value="createRuleForm.templateId"
+              :options="ruleTemplateOptions"
+              :show="false"
+              @click="ruleTemplateDrawerVisible = true"
+            />
+          </n-form-item>
+        </n-form>
 
-      <!-- 操作按钮 -->
-      <template #footer>
-        <div class="flex justify-end gap-3">
-          <n-button @click="createRuleModalVisible = false">取消</n-button>
-          <n-button
-            type="primary"
-            :loading="createRuleReq.loading.value"
-            :disabled="createRuleReq.loading.value"
-            @click="handleCreateRule"
-            >创建</n-button
-          >
-        </div>
-      </template>
-    </n-modal>
+        <!-- 操作按钮 -->
+        <template #footer>
+          <div class="flex justify-end gap-3">
+            <n-button @click="createRuleDrawerVisible = false">取消</n-button>
+            <n-button
+              type="primary"
+              :loading="createRuleReq.loading.value"
+              :disabled="createRuleReq.loading.value"
+              @click="handleCreateRule"
+              >创建</n-button
+            >
+          </div>
+        </template>
+      </n-drawer-content>
+
+      <!-- 规则模板列表 -->
+      <n-drawer
+        v-model:show="ruleTemplateDrawerVisible"
+        height="85%"
+        placement="bottom"
+      >
+        <n-drawer-content
+          :title="`规则模板（共${
+            listRuleTemplatesReq.data.value?.length || 0
+          }个）`"
+          closable
+        >
+          <n-tabs type="segment" v-model:value="currentRuleTemplateTab">
+            <!-- 我的模板 -->
+            <n-tab-pane
+              v-for="tab in ruleTemplateTabs"
+              :key="tab.name"
+              :name="tab.name"
+              :tab="tab.label"
+            >
+              <ul class="flex flex-col gap-3 c-gray-7">
+                <n-skeleton
+                  v-if="listRuleTemplatesReq.loading.value"
+                  :repeat="3"
+                  height="80px"
+                  :sharp="false"
+                />
+
+                <template v-else>
+                  <!-- 规则模板item -->
+                  <rule-template-item
+                    v-for="item in listRuleTemplatesReq.data.value"
+                    :key="item._id"
+                    :rule-template="item"
+                    @click="handleRuleTemplateClick(item._id)"
+                  />
+                </template>
+              </ul>
+            </n-tab-pane>
+          </n-tabs>
+        </n-drawer-content>
+      </n-drawer>
+    </n-drawer>
   </div>
 </template>

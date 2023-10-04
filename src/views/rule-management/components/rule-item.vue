@@ -20,14 +20,14 @@ const emit = defineEmits<{
         <span>
           {{ rule.name }}
         </span>
-        <span
+        <!-- <span
           class="shrink-0 px-2 py-1 text-xs rd-1"
           :class="{
             'bg-indigo-50 text-indigo-5': !rule.public,
             'bg-emerald-50 text-emerald-5': rule.public,
           }"
           >{{ rule.public ? "公开" : "私密" }}</span
-        >
+        > -->
       </h2>
       <!-- 删除 -->
       <n-popconfirm
