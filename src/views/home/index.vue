@@ -22,6 +22,7 @@ import {
   TranslateRound,
   HelpRound,
   MenuRound,
+  SourceRound
 } from "@vicons/material";
 import { useRequest } from "alova";
 import { WordSimpResp, listMyWords } from "@/api/methods/word";
@@ -250,6 +251,14 @@ const dropdownOptions: CustomDropdownOption[] = [
     icon: renderIcon(AutoAwesomeRound),
     onClick: () => {
       router.push("/rule-management");
+    },
+  },
+  {
+    label: "规则模板",
+    key: "rule-template-management",
+    icon: renderIcon(SourceRound),
+    onClick: () => {
+      router.push("/rule-template-management");
     },
   },
   {
