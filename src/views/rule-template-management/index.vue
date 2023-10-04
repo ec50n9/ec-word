@@ -25,8 +25,10 @@ import {
 import RuleTemplateItem from "./components/rule-template-item.vue";
 import { useRequest, invalidateCache } from "alova";
 import { reactive, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 
 const message = useMessage();
+const router = useRouter();
 
 // 获取模板列表请求
 const listRuleTemplatesReq = useRequest(() => listRuleTemplates("mine"));
@@ -114,8 +116,19 @@ deleteRuleTemplateReq.onSuccess((_res) => {
   listRuleTemplatesReq.send();
 });
 
+// 删除模板
 const handleRuleTemplateDelete = (ruleTemplate: RuleTemplate) => {
   deleteRuleTemplateReq.send(ruleTemplate._id);
+};
+
+// 点击模板
+const handleRuleTemplateClick = (ruleTemplate: RuleTemplate) => {
+  router.push({
+    path: "/rule-template-management/edit",
+    query: {
+      id: ruleTemplate._id,
+    },
+  });
 };
 </script>
 
@@ -159,6 +172,7 @@ const handleRuleTemplateDelete = (ruleTemplate: RuleTemplate) => {
           v-for="item in listRuleTemplatesReq.data.value"
           :key="item._id"
           :rule-template="item"
+          @click="handleRuleTemplateClick(item)"
           show-delete
           @delete="handleRuleTemplateDelete"
         />

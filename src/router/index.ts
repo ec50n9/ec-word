@@ -22,6 +22,10 @@ const routes: RouteRecordRaw[] = [
     path: "/rule-template-management",
     component: () => import("@/views/rule-template-management/index.vue"),
   },
+  {
+    path: "/rule-template-management/edit",
+    component: () => import("@/views/rule-template-management/edit.vue"),
+  },
 ];
 
 const router = createRouter({
