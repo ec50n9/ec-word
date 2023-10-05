@@ -382,54 +382,60 @@ onMounted(() => {
     </common-header>
 
     <!-- 单词列表 -->
-    <n-result
-      v-if="listMyWordsReq.error.value"
-      status="500"
-      title="加载失败"
-      :description="listMyWordsReq.error.value.message"
-    />
+    <transition name="fade" mode="out-in">
+      <n-result
+        v-if="listMyWordsReq.error.value"
+        status="500"
+        title="加载失败"
+        :description="listMyWordsReq.error.value.message"
+      />
 
-    <n-empty
-      v-else-if="listMyWordsReq.data.value?.length === 0"
-      class="mt-10"
-      description="不会吧不会吧，不会有人一个单词都没有吧？"
-      size="large"
-    >
-      <template #extra>
-        <n-button size="small" @click="dropdownOptions[0].onClick?.()">
-          🚪 前往添加
-        </n-button>
-      </template>
-    </n-empty>
-
-    <div
-      v-else
-      ref="listRef"
-      class="grow h-0 px-3 py-2 of-auto"
-      @scroll="handleListScroll"
-    >
-      <ul class="grid grid-cols-2 gap-2">
-        <template v-if="listMyWordsReq.loading.value">
-          <n-skeleton :repeat="11" height="40px" :sharp="false" />
+      <n-empty
+        v-else-if="listMyWordsReq.data.value?.length === 0"
+        class="mt-10"
+        description="不会吧不会吧，不会有人一个单词都没有吧？"
+        size="large"
+      >
+        <template #extra>
+          <n-button size="small" @click="dropdownOptions[0].onClick?.()">
+            🚪 前往添加
+          </n-button>
         </template>
+      </n-empty>
 
-        <template v-else>
-          <li
-            v-for="(word, index) in listMyWordsReq.data.value"
-            :key="index"
-            class="px-3 py-3 bg-white c-slate-7 rd-2 b-2 select-none transition active:bg-slate-100 active:c-slate-9 active:scale-95"
-            :class="{ 'b-emerald-2': word.detail, 'b-indigo-2': word.note }"
-            @click="handleWordClick(word)"
-            @touchstart="(e) => handleWordTouchStart(e, word)"
-            @touchmove="(e) => handleWordTouchMove(e)"
-            @touchend="(e) => handleWordTouchEnd(e, word)"
-            @touchcancel="(e) => handleWordTouchEnd(e, word)"
-          >
-            {{ word.word }}
-          </li>
-        </template>
-      </ul>
-    </div>
+      <div
+        v-else
+        ref="listRef"
+        class="grow h-0 px-3 py-2 of-auto"
+        @scroll="handleListScroll"
+      >
+        <transition name="fade" mode="out-in">
+          <template v-if="listMyWordsReq.loading.value">
+            <ul class="grid grid-cols-2 gap-2">
+              <n-skeleton :repeat="11" height="40px" :sharp="false" />
+            </ul>
+          </template>
+
+          <template v-else>
+            <ul class="grid grid-cols-2 gap-2">
+              <li
+                v-for="(word, index) in listMyWordsReq.data.value"
+                :key="index"
+                class="px-3 py-3 bg-white c-slate-7 rd-2 b-2 select-none transition active:bg-slate-100 active:c-slate-9 active:scale-95"
+                :class="{ 'b-emerald-2': word.detail, 'b-indigo-2': word.note }"
+                @click="handleWordClick(word)"
+                @touchstart="(e) => handleWordTouchStart(e, word)"
+                @touchmove="(e) => handleWordTouchMove(e)"
+                @touchend="(e) => handleWordTouchEnd(e, word)"
+                @touchcancel="(e) => handleWordTouchEnd(e, word)"
+              >
+                {{ word.word }}
+              </li>
+            </ul>
+          </template>
+        </transition>
+      </div>
+    </transition>
 
     <!-- 单词弹窗 -->
     <div

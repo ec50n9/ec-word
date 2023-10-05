@@ -148,17 +148,9 @@ const handleWordBookClick = (_wordBook: WordBook) => {
       </n-dropdown>
     </common-header>
 
-    <!-- 词书列表 -->
-    <ul class="p-3 flex flex-col gap-3">
-      <n-skeleton
-        v-if="listMyWordBooksReq.loading.value"
-        :repeat="5"
-        height="80px"
-        :sharp="false"
-      />
-
+    <transition name="fade" mode="out-in">
       <n-empty
-        v-else-if="listMyWordBooksReq.data.value?.length === 0"
+        v-if="listMyWordBooksReq.data.value?.length === 0"
         class="mt-10"
         description="啊？你怎么一个词源都没有，害！"
         size="large"
@@ -170,18 +162,28 @@ const handleWordBookClick = (_wordBook: WordBook) => {
         </template>
       </n-empty>
 
-      <template v-else>
-        <!-- 词书item -->
-        <word-book-item
-          v-for="item in listMyWordBooksReq.data.value"
-          :key="item._id"
-          :word-book="item"
-          show-delete
-          @delete="handleMyWordBookDelete"
-          @click="handleWordBookClick(item)"
-        />
-      </template>
-    </ul>
+      <!-- 词书列表 -->
+      <transition v-else name="fade" mode="out-in">
+        <ul
+          v-if="listMyWordBooksReq.loading.value"
+          class="p-3 flex flex-col gap-3"
+        >
+          <n-skeleton :repeat="5" height="80px" :sharp="false" />
+        </ul>
+
+        <ul v-else class="p-3 flex flex-col gap-3">
+          <!-- 词书item -->
+          <word-book-item
+            v-for="item in listMyWordBooksReq.data.value"
+            :key="item._id"
+            :word-book="item"
+            show-delete
+            @delete="handleMyWordBookDelete"
+            @click="handleWordBookClick(item)"
+          />
+        </ul>
+      </transition>
+    </transition>
 
     <!-- 选择词书弹窗 -->
     <n-drawer
@@ -193,11 +195,15 @@ const handleWordBookClick = (_wordBook: WordBook) => {
         :title="`选择词书（共${listWordBooksReq.data.value?.length || 0}本）`"
         closable
       >
-        <ul class="flex flex-col gap-3 c-gray-7">
-          <template v-if="listWordBooksReq.loading.value">
+        <transition name="fade" mode="out-in">
+          <ul
+            v-if="listWordBooksReq.loading.value"
+            class="flex flex-col gap-3 c-gray-7"
+          >
             <n-skeleton :repeat="5" height="80px" :sharp="false" />
-          </template>
-          <template v-else>
+          </ul>
+
+          <ul v-else class="flex flex-col gap-3 c-gray-7">
             <!-- 词书item -->
             <word-book-item
               v-for="item in listWordBooksReq.data.value"
@@ -207,8 +213,8 @@ const handleWordBookClick = (_wordBook: WordBook) => {
               :badge="myWordBookIds.has(item._id) ? '已添加' : ''"
               @click="handleCheckWordBook(item._id)"
             />
-          </template>
-        </ul>
+          </ul>
+        </transition>
 
         <template #footer>
           <n-space>

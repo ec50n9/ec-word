@@ -146,34 +146,36 @@ const handleRuleTemplateClick = (ruleTemplate: RuleTemplate) => {
       >
     </common-header>
 
-    <!-- 规则模板列表 -->
-    <ul class="p-3 flex flex-col gap-3">
-      <n-skeleton
-        v-if="listRuleTemplatesReq.loading.value"
-        :repeat="5"
-        height="80px"
-        :sharp="false"
-      />
-
+    <transition name="fade" mode="out-in">
       <n-empty
-        v-else-if="listRuleTemplatesReq.data.value?.length === 0"
+        v-if="listRuleTemplatesReq.data.value?.length === 0"
         class="mt-10"
         description="一个模板都没有，害！"
         size="large"
       />
 
-      <template v-else>
-        <!-- 模板item -->
-        <rule-template-item
-          v-for="item in listRuleTemplatesReq.data.value"
-          :key="item._id"
-          :rule-template="item"
-          @click="handleRuleTemplateClick(item)"
-          show-delete
-          @delete="handleRuleTemplateDelete"
-        />
-      </template>
-    </ul>
+      <!-- 规则模板列表 -->
+      <transition v-else name="fade" mode="out-in">
+        <ul
+          v-if="listRuleTemplatesReq.loading.value"
+          class="p-3 flex flex-col gap-3"
+        >
+          <n-skeleton :repeat="5" height="80px" :sharp="false" />
+        </ul>
+
+        <ul v-else class="p-3 flex flex-col gap-3">
+          <!-- 模板item -->
+          <rule-template-item
+            v-for="item in listRuleTemplatesReq.data.value"
+            :key="item._id"
+            :rule-template="item"
+            @click="handleRuleTemplateClick(item)"
+            show-delete
+            @delete="handleRuleTemplateDelete"
+          />
+        </ul>
+      </transition>
+    </transition>
 
     <!-- 创建模板弹窗 -->
     <n-modal

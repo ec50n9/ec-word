@@ -169,17 +169,9 @@ const handleDeleteRule = (ruleId: string) => {
       >
     </common-header>
 
-    <!-- 词书列表 -->
-    <ul class="p-3 flex flex-col gap-3">
-      <n-skeleton
-        v-if="listRulesReq.loading.value"
-        :repeat="5"
-        height="80px"
-        :sharp="false"
-      />
-
+    <transition name="fade" mode="out-in">
       <n-empty
-        v-else-if="listRulesReq.data.value?.length === 0"
+        v-if="listRulesReq.data.value?.length === 0"
         class="mt-10"
         description="还没有规则呢"
         size="large"
@@ -191,16 +183,23 @@ const handleDeleteRule = (ruleId: string) => {
         </template>
       </n-empty>
 
-      <template v-else>
-        <!-- 词书item -->
-        <rule-item
-          v-for="item in listRulesReq.data.value"
-          :key="item._id"
-          :rule="item"
-          @delete="handleDeleteRule(item._id)"
-        />
-      </template>
-    </ul>
+      <!-- 词书列表 -->
+      <transition v-else name="fade" mode="out-in">
+        <ul v-if="listRulesReq.loading.value" class="p-3 flex flex-col gap-3">
+          <n-skeleton :repeat="5" height="80px" :sharp="false" />
+        </ul>
+
+        <ul v-else class="p-3 flex flex-col gap-3">
+          <!-- 词书item -->
+          <rule-item
+            v-for="item in listRulesReq.data.value"
+            :key="item._id"
+            :rule="item"
+            @delete="handleDeleteRule(item._id)"
+          />
+        </ul>
+      </transition>
+    </transition>
 
     <!-- 创建规则弹窗 -->
     <n-drawer

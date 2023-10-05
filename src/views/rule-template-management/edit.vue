@@ -195,19 +195,19 @@ const handleComplete = () => {
 
     <!-- 内容 -->
     <div class="grow h-0">
-      <template v-if="getRuleTemplateReq.loading.value">
-        <div class="py-3 px-5">
+      <transition name="fade" mode="out-in">
+        <div v-if="getRuleTemplateReq.loading.value" class="py-3 px-5">
           <n-skeleton text size="medium" :repeat="5" />
           <n-skeleton text size="medium" style="width: 60%" />
         </div>
-      </template>
 
-      <code-editor
-        v-else
-        ref="codeEditor"
-        class="w-full h-full"
-        v-model:value="value"
-      />
+        <code-editor
+          v-else
+          ref="codeEditor"
+          class="w-full h-full"
+          v-model:value="value"
+        />
+      </transition>
     </div>
 
     <!-- 快捷操作栏 -->
