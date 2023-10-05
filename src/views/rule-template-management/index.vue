@@ -157,13 +157,21 @@ const handleRuleTemplateClick = (ruleTemplate: RuleTemplate) => {
       <!-- 规则模板列表 -->
       <transition v-else name="fade" mode="out-in">
         <ul
-          v-if="listRuleTemplatesReq.loading.value"
+          v-if="
+            !listRuleTemplatesReq.data.value &&
+            listRuleTemplatesReq.loading.value
+          "
           class="p-3 flex flex-col gap-3"
         >
           <n-skeleton :repeat="5" height="80px" :sharp="false" />
         </ul>
 
-        <ul v-else class="p-3 flex flex-col gap-3">
+        <transition-group
+          v-else
+          name="list"
+          tag="ul"
+          class="py-3 mx-3 flex flex-col gap-3"
+        >
           <!-- 模板item -->
           <rule-template-item
             v-for="item in listRuleTemplatesReq.data.value"
@@ -173,7 +181,7 @@ const handleRuleTemplateClick = (ruleTemplate: RuleTemplate) => {
             show-delete
             @delete="handleRuleTemplateDelete"
           />
-        </ul>
+        </transition-group>
       </transition>
     </transition>
 

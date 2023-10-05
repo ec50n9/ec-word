@@ -165,13 +165,20 @@ const handleWordBookClick = (_wordBook: WordBook) => {
       <!-- 词书列表 -->
       <transition v-else name="fade" mode="out-in">
         <ul
-          v-if="listMyWordBooksReq.loading.value"
+          v-if="
+            !listMyWordBooksReq.data.value && listMyWordBooksReq.loading.value
+          "
           class="p-3 flex flex-col gap-3"
         >
           <n-skeleton :repeat="5" height="80px" :sharp="false" />
         </ul>
 
-        <ul v-else class="p-3 flex flex-col gap-3">
+        <transition-group
+          v-else
+          name="list"
+          tag="ul"
+          class="p-3 flex flex-col gap-3"
+        >
           <!-- 词书item -->
           <word-book-item
             v-for="item in listMyWordBooksReq.data.value"
@@ -181,7 +188,7 @@ const handleWordBookClick = (_wordBook: WordBook) => {
             @delete="handleMyWordBookDelete"
             @click="handleWordBookClick(item)"
           />
-        </ul>
+        </transition-group>
       </transition>
     </transition>
 
@@ -208,6 +215,7 @@ const handleWordBookClick = (_wordBook: WordBook) => {
             <word-book-item
               v-for="item in listWordBooksReq.data.value"
               :key="item._id"
+              class="b-2"
               :word-book="item"
               :checked="checkedWordBookIds.has(item._id)"
               :badge="myWordBookIds.has(item._id) ? '已添加' : ''"

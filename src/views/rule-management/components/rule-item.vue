@@ -13,7 +13,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <li class="px-4 py-3 bg-white c-gray-7 b rd-3">
+  <li class="w-full px-4 py-3 bg-white c-gray-7 b rd-3">
     <div class="flex items-center gap-3">
       <!-- 标题 -->
       <h2 class="grow w-0 flex items-center flex-wrap gap-2 text-lg">

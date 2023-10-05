@@ -17,7 +17,7 @@ const emit = defineEmits<{
 
 <template>
   <li
-    class="p-3 flex items-start gap-3 b-2 rd-3 transition"
+    class="p-3 flex items-start gap-3 b rd-3 transition"
     :class="{
       'bg-white': !checked,
       'b-blue-5 bg-blue-50 scale-95': checked,

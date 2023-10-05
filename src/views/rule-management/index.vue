@@ -185,11 +185,19 @@ const handleDeleteRule = (ruleId: string) => {
 
       <!-- 词书列表 -->
       <transition v-else name="fade" mode="out-in">
-        <ul v-if="listRulesReq.loading.value" class="p-3 flex flex-col gap-3">
+        <ul
+          v-if="!listRulesReq.data.value && listRulesReq.loading.value"
+          class="p-3 flex flex-col gap-3"
+        >
           <n-skeleton :repeat="5" height="80px" :sharp="false" />
         </ul>
 
-        <ul v-else class="p-3 flex flex-col gap-3">
+        <transition-group
+          v-else
+          name="list"
+          tag="ul"
+          class="py-3 mx-3 flex flex-col gap-3"
+        >
           <!-- 词书item -->
           <rule-item
             v-for="item in listRulesReq.data.value"
@@ -197,7 +205,7 @@ const handleDeleteRule = (ruleId: string) => {
             :rule="item"
             @delete="handleDeleteRule(item._id)"
           />
-        </ul>
+        </transition-group>
       </transition>
     </transition>
 
@@ -272,15 +280,15 @@ const handleDeleteRule = (ruleId: string) => {
               :name="tab.name"
               :tab="tab.label"
             >
-              <ul class="flex flex-col gap-3 c-gray-7">
-                <n-skeleton
+              <transition name="fade" mode="out-in">
+                <ul
                   v-if="listRuleTemplatesReq.loading.value"
-                  :repeat="3"
-                  height="80px"
-                  :sharp="false"
-                />
+                  class="flex flex-col gap-3 c-gray-7"
+                >
+                  <n-skeleton :repeat="3" height="80px" :sharp="false" />
+                </ul>
 
-                <template v-else>
+                <ul v-else class="flex flex-col gap-3 c-gray-7">
                   <!-- 规则模板item -->
                   <rule-template-item
                     v-for="item in listRuleTemplatesReq.data.value"
@@ -288,8 +296,8 @@ const handleDeleteRule = (ruleId: string) => {
                     :rule-template="item"
                     @click="handleRuleTemplateClick(item._id)"
                   />
-                </template>
-              </ul>
+                </ul>
+              </transition>
             </n-tab-pane>
           </n-tabs>
         </n-drawer-content>
