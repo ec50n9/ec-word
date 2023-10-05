@@ -37,13 +37,19 @@ const router = createRouter({
   routes,
 });
 
+let loadingBarTimeout: NodeJS.Timeout | null = null;
+
 router.beforeEach(() => {
-  // 加载条动画开始
-  useProviderStore().loadingBar?.start();
+  // 加载条动画开始，只在加载时间超过100ms时才显示加载条
+  loadingBarTimeout && clearTimeout(loadingBarTimeout);
+  loadingBarTimeout = setTimeout(() => {
+    useProviderStore().loadingBar?.start();
+  }, 100);
 });
 
 router.afterEach((to, from) => {
   // 加载条动画结束
+  loadingBarTimeout && clearTimeout(loadingBarTimeout);
   useProviderStore().loadingBar?.finish();
 
   const toDepth = to.path.split("/").filter((char) => char).length;
