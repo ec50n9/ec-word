@@ -11,7 +11,7 @@ import {
   listWordBooks,
   unbindWordBook,
 } from "@/api/methods/word";
-import { DropdownOption } from "naive-ui";
+import { DropdownOption, NIcon } from "naive-ui";
 
 const message = useMessage();
 
