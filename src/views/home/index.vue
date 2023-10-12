@@ -1,16 +1,4 @@
 <script lang="ts" setup>
-import { CSSProperties, Component, h, onMounted, ref, watch } from "vue";
-import { onBeforeRouteLeave, useRouter } from "vue-router";
-import {
-  NButton,
-  NIcon,
-  NSwitch,
-  NSkeleton,
-  NEmpty,
-  NResult,
-  NDropdown,
-  DropdownOption,
-} from "naive-ui";
 import {
   PlusRound,
   RecordVoiceOverTwotone,
@@ -29,12 +17,15 @@ import { useUserStore } from "@/store/modules/user";
 import WordDialog from "./components/word-dialog.vue";
 import GuideModal from "./components/guide-modal.vue";
 import CommonHeader from "@/components/common-header.vue";
+import { NIcon, DropdownOption } from "naive-ui";
+import { CSSProperties } from "vue";
 
 const appStore = useAppStore();
 const userStore = useUserStore();
 const dialog = useDialog();
 const message = useMessage();
 const router = useRouter();
+
 const audioBaseURL = "https://dict.youdao.com/dictvoice?audio=";
 
 // 获取单词列表
@@ -341,7 +332,7 @@ onMounted(() => {
   <div class="w-full min-h-screen flex flex-col bg-slate-1">
     <!-- 顶部栏 -->
     <common-header
-      title="😠 狠狠记单词"
+      :title="$t('hello')"
       :show-back="false"
       :class="{ shadow: scrollTop > 0 }"
     >
@@ -393,7 +384,7 @@ onMounted(() => {
       <n-empty
         v-else-if="listMyWordsReq.data.value?.length === 0"
         class="mt-10"
-        description="不会吧不会吧，不会有人一个单词都没有吧？"
+        :description="$t('word-list-empty-tip')"
         size="large"
       >
         <template #extra>
