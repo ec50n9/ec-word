@@ -1,4 +1,9 @@
-import { DialogApi, LoadingBarApi, MessageApi } from "naive-ui";
+import {
+  DialogApi,
+  LoadingBarApi,
+  MessageApi,
+  NotificationApi,
+} from "naive-ui";
 import { defineStore } from "pinia";
 
 export const useProviderStore = defineStore("provider", {
@@ -6,6 +11,7 @@ export const useProviderStore = defineStore("provider", {
     loadingBar: null as LoadingBarApi | null,
     dialog: null as DialogApi | null,
     message: null as MessageApi | null,
+    notification: null as NotificationApi | null,
   }),
   actions: {
     updateLoadingBar(loadingBar: LoadingBarApi) {
@@ -16,6 +22,9 @@ export const useProviderStore = defineStore("provider", {
     },
     updateMessage(message: MessageApi) {
       this.message = message;
+    },
+    updateNotification(notification: NotificationApi) {
+      this.notification = notification;
     },
   },
 });

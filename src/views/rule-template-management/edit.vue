@@ -23,10 +23,9 @@ import {
 } from "@/api/methods/rule-template";
 import { useRequest } from "alova";
 import { useRoute } from "vue-router";
-import { useProviderStore } from "@/store/modules/provider";
 
 const router = useRoute();
-const providerStore = useProviderStore();
+const message = useMessage();
 
 const { id } = router.query as { id: string };
 
@@ -37,7 +36,7 @@ const value = ref("");
 // 获取模板请求
 const getRuleTemplateReq = useRequest(() => getRuleTemplate(id));
 getRuleTemplateReq.onError((err) => {
-  providerStore.message?.error(err.error.message);
+  message.error(err.error.message);
 });
 getRuleTemplateReq.onSuccess((res) => {
   value.value = res.data.code;
@@ -136,10 +135,10 @@ const updateRuleTemplateReq = useRequest(
   { immediate: false }
 );
 updateRuleTemplateReq.onError((err) => {
-  providerStore.message?.error(err.error.message);
+  message.error(err.error.message);
 });
 updateRuleTemplateReq.onSuccess((_res) => {
-  providerStore.message?.success("保存成功！");
+  message.success("保存成功！");
 });
 
 // 完成按钮点击事件

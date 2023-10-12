@@ -29,11 +29,11 @@ import { useUserStore } from "@/store/modules/user";
 import WordDialog from "./components/word-dialog.vue";
 import GuideModal from "./components/guide-modal.vue";
 import CommonHeader from "@/components/common-header.vue";
-import { useProviderStore } from "@/store/modules/provider";
 
 const appStore = useAppStore();
 const userStore = useUserStore();
-const providerStore = useProviderStore();
+const dialog = useDialog();
+const message = useMessage();
 const router = useRouter();
 const audioBaseURL = "https://dict.youdao.com/dictvoice?audio=";
 
@@ -185,9 +185,9 @@ watch(
   () => appStore.speechType,
   () => {
     if (appStore.speechType) {
-      providerStore.message?.info("🇺🇸 美式发音", { showIcon: false });
+      message.info("🇺🇸 美式发音", { showIcon: false });
     } else {
-      providerStore.message?.info("🇬🇧 英式发音", { showIcon: false });
+      message.info("🇬🇧 英式发音", { showIcon: false });
     }
   }
 );
@@ -286,7 +286,7 @@ const dropdownOptions: CustomDropdownOption[] = [
     key: "logout",
     icon: renderIcon(LogOutRound),
     onClick: () => {
-      providerStore.dialog?.warning({
+      dialog.warning({
         showIcon: false,
         title: "🥹 能和你交流一下吗",
         content:
@@ -294,13 +294,13 @@ const dropdownOptions: CustomDropdownOption[] = [
         positiveText: "嗯",
         negativeText: "手滑",
         onNegativeClick() {
-          providerStore.message?.info("😚 斗晓得侬离不开鹅", {
+          message.info("😚 斗晓得侬离不开鹅", {
             showIcon: false,
           });
         },
         onPositiveClick() {
           userStore.logout();
-          providerStore.message?.info("👋 拜拜了您嘞", { showIcon: false });
+          message.info("👋 拜拜了您嘞", { showIcon: false });
         },
       });
     },

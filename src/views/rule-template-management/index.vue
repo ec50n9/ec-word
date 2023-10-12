@@ -1,18 +1,5 @@
 <script lang="ts" setup>
 import CommonHeader from "@/components/common-header.vue";
-import {
-  NButton,
-  NIcon,
-  NSkeleton,
-  NEmpty,
-  FormInst,
-  NForm,
-  NFormItem,
-  NModal,
-  NInput,
-  NRadioGroup,
-  NRadioButton,
-} from "naive-ui";
 import { PlusRound, WidgetsRound } from "@vicons/material";
 import {
   RuleTemplate,
@@ -23,17 +10,15 @@ import {
 } from "@/api/methods/rule-template";
 import RuleTemplateItem from "./components/rule-template-item.vue";
 import { useRequest, invalidateCache } from "alova";
-import { reactive, ref, watch } from "vue";
-import { useRouter } from "vue-router";
-import { useProviderStore } from "@/store/modules/provider";
+import { FormInst } from "naive-ui";
 
 const router = useRouter();
-const providerStore = useProviderStore();
+const message = useMessage();
 
 // 获取模板列表请求
 const listRuleTemplatesReq = useRequest(() => listRuleTemplates("mine"));
 listRuleTemplatesReq.onError((err) => {
-  providerStore.message?.error(err.error.message);
+  message.error(err.error.message);
 });
 
 // 创建模板弹窗可见性
@@ -80,10 +65,10 @@ const createRuleTemplateReq = useRequest(
   { immediate: false }
 );
 createRuleTemplateReq.onError((err) => {
-  providerStore.message?.error(err.error.message);
+  message.error(err.error.message);
 });
 createRuleTemplateReq.onSuccess((_res) => {
-  providerStore.message?.success("创建成功");
+  message.success("创建成功");
 
   // 刷新模板列表
   invalidateCache(listRuleTemplates("mine"));
@@ -104,10 +89,10 @@ const deleteRuleTemplateReq = useRequest(deleteRuleTemplate, {
   immediate: false,
 });
 deleteRuleTemplateReq.onError((err) => {
-  providerStore.message?.error(err.error.message);
+  message.error(err.error.message);
 });
 deleteRuleTemplateReq.onSuccess((_res) => {
-  providerStore.message?.success("删除成功");
+  message.success("删除成功");
 
   // 刷新模板列表
   invalidateCache(listRuleTemplates("mine"));
