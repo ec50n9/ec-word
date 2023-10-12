@@ -8,7 +8,6 @@ import {
   NIcon,
   NSwitch,
   NSpace,
-  useMessage,
 } from "naive-ui";
 import { ArrowForwardRound, ArrowDownwardRound } from "@vicons/material";
 import { computed, ref } from "vue";
@@ -19,27 +18,28 @@ import {
   translate,
   batchQueryWord,
 } from "@/api/methods/word";
+import { useProviderStore } from "@/store/modules/provider";
 
-const message = useMessage();
+const providerStore = useProviderStore();
 
 const inputValue = ref("");
 
 // 上传单词接口
 const recordWordReq = useRequest(recordWord, { immediate: false });
 recordWordReq.onError((err) => {
-  message.error(err.error.message);
+  providerStore.message?.error(err.error.message);
 });
 recordWordReq.onSuccess(() => {
   inputValue.value = "";
   invalidateCache(listMyWords());
-  message.success("添加成功");
+  providerStore.message?.success("添加成功");
   drawerVisible.value = false;
 });
 
 // 翻译接口
 const translateReq = useRequest(translate, { immediate: false });
 translateReq.onError((err) => {
-  message.error(err.error.message);
+  providerStore.message?.error(err.error.message);
 });
 translateReq.onSuccess((_res) => {
   drawerVisible.value = true;
@@ -48,7 +48,7 @@ translateReq.onSuccess((_res) => {
 // 批量查询单词接口
 const batchQueryReq = useRequest(batchQueryWord, { immediate: false });
 batchQueryReq.onError((err) => {
-  message.error(err.error.message);
+  providerStore.message?.error(err.error.message);
 });
 batchQueryReq.onSuccess((_res) => {
   drawerVisible.value = true;
@@ -105,7 +105,8 @@ const splitedWords = computed(() => {
 
 // 提交事件
 const handleTranslate = () => {
-  if (inputValue.value.trim() === "") return message.warning("请输入单词");
+  if (inputValue.value.trim() === "")
+    return providerStore.message?.warning("请输入单词");
 
   if (autoSplit.value) batchQueryReq.send(splitedWords.value);
   else translateReq.send([inputValue.value]);

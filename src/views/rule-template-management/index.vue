@@ -3,7 +3,6 @@ import CommonHeader from "@/components/common-header.vue";
 import {
   NButton,
   NIcon,
-  useMessage,
   NSkeleton,
   NEmpty,
   FormInst,
@@ -26,14 +25,15 @@ import RuleTemplateItem from "./components/rule-template-item.vue";
 import { useRequest, invalidateCache } from "alova";
 import { reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
+import { useProviderStore } from "@/store/modules/provider";
 
-const message = useMessage();
 const router = useRouter();
+const providerStore = useProviderStore();
 
 // 获取模板列表请求
 const listRuleTemplatesReq = useRequest(() => listRuleTemplates("mine"));
 listRuleTemplatesReq.onError((err) => {
-  message.error(err.error.message);
+  providerStore.message?.error(err.error.message);
 });
 
 // 创建模板弹窗可见性
@@ -80,10 +80,10 @@ const createRuleTemplateReq = useRequest(
   { immediate: false }
 );
 createRuleTemplateReq.onError((err) => {
-  message.error(err.error.message);
+  providerStore.message?.error(err.error.message);
 });
 createRuleTemplateReq.onSuccess((_res) => {
-  message.success("创建成功");
+  providerStore.message?.success("创建成功");
 
   // 刷新模板列表
   invalidateCache(listRuleTemplates("mine"));
@@ -104,10 +104,10 @@ const deleteRuleTemplateReq = useRequest(deleteRuleTemplate, {
   immediate: false,
 });
 deleteRuleTemplateReq.onError((err) => {
-  message.error(err.error.message);
+  providerStore.message?.error(err.error.message);
 });
 deleteRuleTemplateReq.onSuccess((_res) => {
-  message.success("删除成功");
+  providerStore.message?.success("删除成功");
 
   // 刷新模板列表
   invalidateCache(listRuleTemplates("mine"));

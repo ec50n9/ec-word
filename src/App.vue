@@ -6,9 +6,12 @@ import {
   NLoadingBarProvider,
   useLoadingBar,
   NConfigProvider,
+  useDialog,
+  useMessage,
 } from "naive-ui";
-import { defineComponent } from "vue";
+import { defineComponent, onMounted } from "vue";
 import { useProviderStore } from "./store/modules/provider";
+import VConsole from "vconsole";
 
 // 主题覆写
 const themeOverrides = {
@@ -20,9 +23,21 @@ const themeOverrides = {
 // 绑定提供者
 const ProviderBinder = defineComponent({
   setup: () => {
-    useProviderStore().updateLoadingBar(useLoadingBar());
+    const providerStore = useProviderStore();
+    providerStore.updateLoadingBar(useLoadingBar());
+    providerStore.updateDialog(useDialog());
+    providerStore.updateMessage(useMessage());
     return () => null;
   },
+});
+
+onMounted(() => {
+  // vconsole调试
+  if (import.meta.env.DEV) {
+    console.log("初始化vconsole");
+    const vConsole = new VConsole();
+    return () => vConsole.destroy();
+  }
 });
 </script>
 

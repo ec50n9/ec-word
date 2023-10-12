@@ -4,14 +4,7 @@ import CodeEditor from "./components/code-editor.vue";
 // @ts-ignore
 import * as monaco from "monaco-editor/esm/vs/editor/editor.main.js";
 import { Component as VueComponent, h, ref } from "vue";
-import {
-  NIcon,
-  DropdownOption,
-  NButton,
-  NDropdown,
-  useMessage,
-  NSkeleton,
-} from "naive-ui";
+import { NIcon, DropdownOption, NButton, NDropdown, NSkeleton } from "naive-ui";
 import {
   MenuRound,
   UndoRound,
@@ -30,9 +23,10 @@ import {
 } from "@/api/methods/rule-template";
 import { useRequest } from "alova";
 import { useRoute } from "vue-router";
+import { useProviderStore } from "@/store/modules/provider";
 
 const router = useRoute();
-const message = useMessage();
+const providerStore = useProviderStore();
 
 const { id } = router.query as { id: string };
 
@@ -43,7 +37,7 @@ const value = ref("");
 // 获取模板请求
 const getRuleTemplateReq = useRequest(() => getRuleTemplate(id));
 getRuleTemplateReq.onError((err) => {
-  message.error(err.error.message);
+  providerStore.message?.error(err.error.message);
 });
 getRuleTemplateReq.onSuccess((res) => {
   value.value = res.data.code;
@@ -142,10 +136,10 @@ const updateRuleTemplateReq = useRequest(
   { immediate: false }
 );
 updateRuleTemplateReq.onError((err) => {
-  message.error(err.error.message);
+  providerStore.message?.error(err.error.message);
 });
 updateRuleTemplateReq.onSuccess((_res) => {
-  message.success("保存成功！");
+  providerStore.message?.success("保存成功！");
 });
 
 // 完成按钮点击事件

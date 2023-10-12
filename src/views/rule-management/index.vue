@@ -12,7 +12,6 @@ import {
   FormInst,
   NEmpty,
   NSkeleton,
-  useMessage,
   NDrawer,
   NDrawerContent,
   NSelect,
@@ -23,13 +22,14 @@ import { computed, reactive, ref, watch } from "vue";
 import RuleItem from "./components/rule-item.vue";
 import RuleTemplateItem from "@/views/rule-template-management/components/rule-template-item.vue";
 import { listRuleTemplates } from "@/api/methods/rule-template";
+import { useProviderStore } from "@/store/modules/provider";
 
-const message = useMessage();
+const providerStore = useProviderStore();
 
 // 获取规则列表请求
 const listRulesReq = useRequest(listRules);
 listRulesReq.onError((err) => {
-  message.error(err.error.message);
+  providerStore.message?.error(err.error.message);
 });
 
 // 创建规则弹窗
@@ -70,7 +70,7 @@ const listRuleTemplatesReq = useRequest(listRuleTemplates, {
   immediate: false,
 });
 listRuleTemplatesReq.onError((err) => {
-  message.error(err.error.message);
+  providerStore.message?.error(err.error.message);
 });
 
 const ruleTemplateOptions = computed(() => {
@@ -115,10 +115,10 @@ const createRuleReq = useRequest(() => createRule(createRuleForm), {
   immediate: false,
 });
 createRuleReq.onError((err) => {
-  message.error(err.error.message);
+  providerStore.message?.error(err.error.message);
 });
 createRuleReq.onSuccess((_res) => {
-  message.success("创建成功");
+  providerStore.message?.success("创建成功");
 
   // 刷新规则列表
   invalidateCache(listRules());
@@ -141,10 +141,10 @@ const handleCreateRule = () => {
 // 删除规则请求
 const deleteRuleReq = useRequest(deleteRule, { immediate: false });
 deleteRuleReq.onError((err) => {
-  message.error(err.error.message);
+  providerStore.message?.error(err.error.message);
 });
 deleteRuleReq.onSuccess((_res) => {
-  message.success("删除成功");
+  providerStore.message?.success("删除成功");
 
   // 刷新规则列表
   invalidateCache(listRules());

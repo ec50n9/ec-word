@@ -4,7 +4,7 @@ import GlobalFetch from "alova/GlobalFetch";
 import { useUserStore } from "@/store/modules/user";
 import router from "@/router";
 
-const baseURL = "https://vssu8m.laf.run";
+const baseURL = import.meta.env.VITE_APP_BASE_URL;
 
 export const commonAlova = createAlova({
   baseURL,

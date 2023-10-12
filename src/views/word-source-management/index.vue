@@ -10,7 +10,6 @@ import {
   NDrawerContent,
   NSkeleton,
   NSpace,
-  useMessage,
   NEmpty,
 } from "naive-ui";
 import { PlusRound, BookRound } from "@vicons/material";
@@ -23,8 +22,9 @@ import {
   listWordBooks,
   unbindWordBook,
 } from "@/api/methods/word";
+import { useProviderStore } from "@/store/modules/provider";
 
-const message = useMessage();
+const providerStore = useProviderStore();
 
 const renderIcon = (icon: Component) => () =>
   h(NIcon, null, { default: () => h(icon) });
@@ -76,7 +76,8 @@ const listWordBooksReq = useRequest(listWordBooks, {
 });
 const checkedWordBookIds = reactive(new Set());
 const handleCheckWordBook = (id: string) => {
-  if (myWordBookIds.value.has(id)) return message.warning("该词书已添加");
+  if (myWordBookIds.value.has(id))
+    return providerStore.message?.warning("该词书已添加");
 
   if (checkedWordBookIds.has(id)) {
     checkedWordBookIds.delete(id);
@@ -96,7 +97,7 @@ const handleCancelSelectWordBook = () => {
 // 绑定词书的请求
 const bindWordBookReq = useRequest(bindWordBook, { immediate: false });
 bindWordBookReq.onSuccess(() => {
-  message.success("添加词书 📖 成功");
+  providerStore.message?.success("添加词书 📖 成功");
 
   // 刷新词书列表
   invalidateCache(listMyWordBooks());
@@ -109,7 +110,7 @@ bindWordBookReq.onSuccess(() => {
 // 解绑词书的请求
 const unbindWordBookReq = useRequest(unbindWordBook, { immediate: false });
 unbindWordBookReq.onSuccess(() => {
-  message.success("删除词书 📖 成功");
+  providerStore.message?.success("删除词书 📖 成功");
 
   // 刷新词书列表
   invalidateCache(listMyWordBooks());
@@ -123,7 +124,7 @@ const handleMyWordBookDelete = (wordBook: WordBook) => {
 
 // 点击词书
 const handleWordBookClick = (_wordBook: WordBook) => {
-  message.info("等等，这里还没写好呢伙计 🦃️");
+  providerStore.message?.info("等等，这里还没写好呢伙计 🦃️");
 };
 </script>
 

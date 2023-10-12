@@ -1,22 +1,14 @@
 <script lang="ts" setup>
 import { invalidateCache, useRequest } from "alova";
 import { registerUser, loginUser } from "@/api/methods/user";
-import {
-  FormInst,
-  NForm,
-  NFormItem,
-  NInput,
-  NButton,
-  useDialog,
-  useMessage,
-} from "naive-ui";
+import { FormInst, NForm, NFormItem, NInput, NButton } from "naive-ui";
 import { useUserStore } from "@/store/modules/user";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useProviderStore } from "@/store/modules/provider";
 
-const dialog = useDialog();
-const message = useMessage();
 const userStore = useUserStore();
+const providerStore = useProviderStore();
 const router = useRouter();
 
 const formRef = ref<FormInst | null>(null);
@@ -35,14 +27,14 @@ const registerReq = useRequest(
 );
 // 注册失败
 registerReq.onError((err) => {
-  dialog.error({
+  providerStore.dialog?.error({
     title: "注册失败",
     content: err.error.message,
   });
 });
 // 注册成功
 registerReq.onSuccess(() => {
-  message.success("注册成功!");
+  providerStore.message?.success("注册成功!");
   loginReq.send();
 });
 // 注册事件
@@ -57,14 +49,14 @@ const loginReq = useRequest(
 );
 // 登录失败
 loginReq.onError((err) => {
-  dialog.error({
+  providerStore.dialog?.error({
     title: "登录失败",
     content: err.error.message,
   });
 });
 // 登录成功
 loginReq.onSuccess(({ data }) => {
-  message.success("登录成功!");
+  providerStore.message?.success("登录成功!");
   const { accessToken } = data;
   userStore.updateAccessToken(accessToken);
   invalidateCache();

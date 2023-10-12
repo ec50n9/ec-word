@@ -9,9 +9,7 @@ import {
   NEmpty,
   NResult,
   NDropdown,
-  useMessage,
   DropdownOption,
-  useDialog,
 } from "naive-ui";
 import {
   PlusRound,
@@ -31,11 +29,11 @@ import { useUserStore } from "@/store/modules/user";
 import WordDialog from "./components/word-dialog.vue";
 import GuideModal from "./components/guide-modal.vue";
 import CommonHeader from "@/components/common-header.vue";
+import { useProviderStore } from "@/store/modules/provider";
 
 const appStore = useAppStore();
 const userStore = useUserStore();
-const message = useMessage();
-const dialog = useDialog();
+const providerStore = useProviderStore();
 const router = useRouter();
 const audioBaseURL = "https://dict.youdao.com/dictvoice?audio=";
 
@@ -187,9 +185,9 @@ watch(
   () => appStore.speechType,
   () => {
     if (appStore.speechType) {
-      message.info("🇺🇸 美式发音", { showIcon: false });
+      providerStore.message?.info("🇺🇸 美式发音", { showIcon: false });
     } else {
-      message.info("🇬🇧 英式发音", { showIcon: false });
+      providerStore.message?.info("🇬🇧 英式发音", { showIcon: false });
     }
   }
 );
@@ -288,7 +286,7 @@ const dropdownOptions: CustomDropdownOption[] = [
     key: "logout",
     icon: renderIcon(LogOutRound),
     onClick: () => {
-      dialog.warning({
+      providerStore.dialog?.warning({
         showIcon: false,
         title: "🥹 能和你交流一下吗",
         content:
@@ -296,11 +294,13 @@ const dropdownOptions: CustomDropdownOption[] = [
         positiveText: "嗯",
         negativeText: "手滑",
         onNegativeClick() {
-          message.info("😚 斗晓得侬离不开鹅", { showIcon: false });
+          providerStore.message?.info("😚 斗晓得侬离不开鹅", {
+            showIcon: false,
+          });
         },
         onPositiveClick() {
           userStore.logout();
-          message.info("👋 拜拜了您嘞", { showIcon: false });
+          providerStore.message?.info("👋 拜拜了您嘞", { showIcon: false });
         },
       });
     },
