@@ -21,7 +21,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <n-config-provider :theme="appStore.theme.theme">
+  <n-config-provider :theme="appStore.currentTheme.theme">
     <global-provider>
       <main class="h-screen of-y-auto bg-slate-1 c-slate-7 select-none">
         <router-view v-slot="{ Component, route }">

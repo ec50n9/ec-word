@@ -16,6 +16,7 @@ import { CSSProperties } from "vue";
 import router from "@/router";
 import { useUserStore } from "@/store/modules/user";
 import { useAppStore } from "@/store/modules/app";
+import { ThemeType, themeMap } from "@/config/theme";
 
 defineProps<{
   showShadow: boolean;
@@ -130,6 +131,22 @@ const dropdownOptions: CustomDropdownOption[] = [
   {
     type: "divider",
     key: "d1",
+  },
+  {
+    label: "主题",
+    key: "theme",
+    icon: renderIcon(RecordVoiceOverTwotone),
+    children: Object.keys(themeMap).map((key) => {
+      const theme = themeMap[key as ThemeType];
+      return {
+        label: theme.name,
+        key: theme.name,
+        icon: () => h("span", null, ""),
+        onClick: () => {
+          appStore.updateCurrentTheme(key as ThemeType);
+        },
+      };
+    }),
   },
   {
     label: "帮助",

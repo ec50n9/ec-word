@@ -1,13 +1,6 @@
-import { lightTheme } from "naive-ui";
-import { BuiltInGlobalTheme } from "naive-ui/es/themes/interface";
 import { defineStore } from "pinia";
 import { useProviderStore } from "./provider";
-
-export type ThemeType = "light" | "dark";
-export const themeMap = {
-  light: { name: "", theme: lightTheme },
-  dark: { name: "", theme: lightTheme },
-} as Record<ThemeType, { name: string; theme: BuiltInGlobalTheme }>;
+import { ThemeType, themeMap } from "@/config/theme";
 
 export const useAppStore = defineStore("app", {
   persist: {
@@ -19,14 +12,17 @@ export const useAppStore = defineStore("app", {
     // 发音类型
     speechType: true,
     // 主题
-    theme: themeMap.light,
+    currentTheme: themeMap.light,
     // 页面滚动位置
     scrollPositionCaches: {} as { [key: string]: { x: number; y: number } },
   }),
   actions: {
+    /** 更新是否第一次打开 */
     updateFirstOpen(value: boolean) {
       this.firstOpen = value;
     },
+
+    /** 更新发音类型 */
     updateSpeechType(type: boolean) {
       this.speechType = type;
 
@@ -37,6 +33,13 @@ export const useAppStore = defineStore("app", {
         providerStore.message?.info("🇬🇧 英式发音", { showIcon: false });
       }
     },
+
+    /** 更新主题 */
+    updateCurrentTheme(theme: ThemeType) {
+      this.currentTheme = themeMap[theme];
+    },
+
+    /** 更新页面滚动位置 */
     updateScrollPositionCaches(
       flag: string,
       scrollPosition: { x: number; y: number }
