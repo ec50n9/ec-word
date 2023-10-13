@@ -1,6 +1,7 @@
 import { lightTheme } from "naive-ui";
 import { BuiltInGlobalTheme } from "naive-ui/es/themes/interface";
 import { defineStore } from "pinia";
+import { useProviderStore } from "./provider";
 
 export type ThemeType = "light" | "dark";
 export const themeMap = {
@@ -28,6 +29,13 @@ export const useAppStore = defineStore("app", {
     },
     updateSpeechType(type: boolean) {
       this.speechType = type;
+
+      const providerStore = useProviderStore();
+      if (this.speechType) {
+        providerStore.message?.info("🇺🇸 美式发音", { showIcon: false });
+      } else {
+        providerStore.message?.info("🇬🇧 英式发音", { showIcon: false });
+      }
     },
     updateScrollPositionCaches(
       flag: string,

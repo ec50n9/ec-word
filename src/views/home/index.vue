@@ -1,38 +1,23 @@
 <script lang="ts" setup>
-import {
-  PlusRound,
-  RecordVoiceOverTwotone,
-  LogOutRound,
-  LibraryBooksRound,
-  AutoAwesomeRound,
-  TranslateRound,
-  HelpRound,
-  MenuRound,
-  SourceRound,
-} from "@vicons/material";
 import { useRequest } from "alova";
 import { WordSimpResp, listMyWords } from "@/api/methods/word";
 import { useAppStore } from "@/store/modules/app";
-import { useUserStore } from "@/store/modules/user";
+import { useAudio } from "./hooks/useAudio";
 import WordDialog from "./components/word-dialog.vue";
+import PageHeader from "./components/page-header.vue";
 import GuideModal from "./components/guide-modal.vue";
-import CommonHeader from "@/components/common-header.vue";
-import { NIcon, DropdownOption } from "naive-ui";
-import { CSSProperties } from "vue";
 
 const appStore = useAppStore();
-const userStore = useUserStore();
-const dialog = useDialog();
-const message = useMessage();
 const router = useRouter();
+const audio = useAudio();
+
+const headerRef = ref<InstanceType<typeof PageHeader>>();
 
 const audioBaseURL = "https://dict.youdao.com/dictvoice?audio=";
 
 // 获取单词列表
 const listMyWordsReq = useRequest(listMyWords);
 
-// 引导弹窗
-const guideModalVisible = ref(false);
 listMyWordsReq.onSuccess(() => {
   if (appStore.firstOpen) {
     guideModalVisible.value = true;
@@ -114,194 +99,10 @@ const handleListScroll = (e: Event) => {
   scrollTop.value = target.scrollTop;
 };
 
-// 创建一个音频播放器
-const useAudio = () => {
-  const audio = new Audio();
-
-  const playing = ref(false);
-  const loading = ref(false);
-  const set = (src: string) => {
-    audio.src = src;
-    audio.play();
-  };
-
-  audio.addEventListener("play", () => {
-    playing.value = true;
-  });
-  audio.addEventListener("pause", () => {
-    playing.value = false;
-  });
-  audio.addEventListener("waiting", () => {
-    loading.value = true;
-  });
-  audio.addEventListener("canplay", () => {
-    loading.value = false;
-  });
-  audio.addEventListener("error", () => {
-    loading.value = false;
-  });
-
-  return {
-    playing,
-    loading,
-    set,
-  };
-};
-const audio = useAudio();
-
-// 语音类型切换的背景色
-const railStyle = ({
-  focused,
-  checked,
-}: {
-  focused: boolean;
-  checked: boolean;
-}) => {
-  const style: CSSProperties = {};
-  if (checked) {
-    style.background = "#fca5a5";
-    if (focused) {
-      style.boxShadow = "0 0 0 2px #d0305040";
-    }
-  } else {
-    style.background = "#93c5fd";
-    if (focused) {
-      style.boxShadow = "0 0 0 2px #2080f040";
-    }
-  }
-  return style;
-};
-
-watch(
-  () => appStore.speechType,
-  () => {
-    if (appStore.speechType) {
-      message.info("🇺🇸 美式发音", { showIcon: false });
-    } else {
-      message.info("🇬🇧 英式发音", { showIcon: false });
-    }
-  }
-);
-
-const renderIcon = (icon: Component) => () =>
-  h(NIcon, null, { default: () => h(icon) });
-
-// 配置下拉菜单
-type CustomDropdownOption = DropdownOption & { onClick?: () => void };
-const dropdownOptions: CustomDropdownOption[] = [
-  {
-    label: "添加单词",
-    key: "add-word",
-    icon: renderIcon(PlusRound),
-    onClick: () => router.push("/record-word"),
-  },
-  {
-    label: "翻译",
-    key: "translate",
-    icon: renderIcon(TranslateRound),
-  },
-  {
-    type: "divider",
-    key: "d0",
-  },
-  {
-    label: "发音",
-    key: "speech",
-    icon: renderIcon(RecordVoiceOverTwotone),
-    children: [
-      {
-        label: "美式发音",
-        key: "us",
-        icon: () => h("span", null, "🇺🇸"),
-        onClick: () => {
-          appStore.updateSpeechType(true);
-        },
-      },
-      {
-        label: "英式发音",
-        key: "uk",
-        icon: () => h("span", null, "🇬🇧"),
-        onClick: () => {
-          appStore.updateSpeechType(false);
-        },
-      },
-    ],
-  },
-  {
-    type: "divider",
-    key: "d1",
-  },
-  {
-    label: "词源管理",
-    key: "word-source-management",
-    icon: renderIcon(LibraryBooksRound),
-    onClick: () => {
-      router.push("/word-source-management");
-    },
-  },
-  {
-    label: "规则管理",
-    key: "rule-management",
-    icon: renderIcon(AutoAwesomeRound),
-    onClick: () => {
-      router.push("/rule-management");
-    },
-  },
-  {
-    label: "规则模板",
-    key: "rule-template-management",
-    icon: renderIcon(SourceRound),
-    onClick: () => {
-      router.push("/rule-template-management");
-    },
-  },
-  {
-    type: "divider",
-    key: "d1",
-  },
-  {
-    label: "帮助",
-    key: "help",
-    icon: renderIcon(HelpRound),
-    onClick: () => {
-      guideModalVisible.value = true;
-    },
-  },
-  // {
-  //   label: "设置",
-  //   key: "setting",
-  //   icon: renderIcon(SettingsRound),
-  // },
-  {
-    label: "退出登录",
-    key: "logout",
-    icon: renderIcon(LogOutRound),
-    onClick: () => {
-      dialog.warning({
-        showIcon: false,
-        title: "🥹 能和你交流一下吗",
-        content:
-          "🚶‍♀️ 真的要走了吗？还会再回来吗？我们还会再见吗？你一定要幸福要开心啊...",
-        positiveText: "嗯",
-        negativeText: "手滑",
-        onNegativeClick() {
-          message.info("😚 斗晓得侬离不开鹅", {
-            showIcon: false,
-          });
-        },
-        onPositiveClick() {
-          userStore.logout();
-          message.info("👋 拜拜了您嘞", { showIcon: false });
-        },
-      });
-    },
-  },
-];
-const handleDropdownSelect = (
-  _key: string | number,
-  option: CustomDropdownOption
-) => {
-  option.onClick?.();
+// 引导弹窗
+const guideModalVisible = ref(false);
+const handleOpenGuideModal = () => {
+  guideModalVisible.value = true;
 };
 
 // 跳转页面前记录滚动位置
@@ -330,47 +131,12 @@ onMounted(() => {
 
 <template>
   <div class="w-full min-h-screen flex flex-col bg-slate-1">
-    <!-- 顶部栏 -->
-    <common-header
-      :title="$t('hello')"
-      :show-back="false"
-      :class="{ shadow: scrollTop > 0 }"
-    >
-      <div class="flex items-center gap-3">
-        <!-- 播放器 -->
-        <n-switch
-          class="shrink-0"
-          :value="appStore.speechType"
-          @update:value="appStore.updateSpeechType"
-          :round="false"
-          size="large"
-          :rail-style="railStyle"
-          :loading="audio.loading.value"
-        >
-          <template #icon>
-            <n-icon><record-voice-over-twotone /></n-icon>
-          </template>
-          <template #checked>🇺🇸</template>
-          <template #unchecked>🇬🇧</template>
-        </n-switch>
-
-        <!-- 配置按钮 -->
-        <n-dropdown
-          trigger="click"
-          :options="dropdownOptions"
-          show-arrow
-          size="large"
-          @select="handleDropdownSelect"
-        >
-          <n-button strong secondary round type="primary">
-            <template #icon>
-              <n-icon><menu-round /></n-icon>
-            </template>
-            菜单
-          </n-button>
-        </n-dropdown>
-      </div>
-    </common-header>
+    <page-header
+      ref="headerRef"
+      :show-shadow="scrollTop > 0"
+      :audio-loading="audio.loading.value"
+      @open-guide-modal="handleOpenGuideModal"
+    />
 
     <!-- 单词列表 -->
     <transition name="fade" mode="out-in">
@@ -388,7 +154,10 @@ onMounted(() => {
         size="large"
       >
         <template #extra>
-          <n-button size="small" @click="dropdownOptions[0].onClick?.()">
+          <n-button
+            size="small"
+            @click="headerRef?.dropdownOptions[0].onClick?.()"
+          >
             🚪 前往添加
           </n-button>
         </template>
