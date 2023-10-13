@@ -15,6 +15,7 @@ declare module 'vue' {
     NDrawer: typeof import('naive-ui')['NDrawer']
     NDrawerContent: typeof import('naive-ui')['NDrawerContent']
     NDropdown: typeof import('naive-ui')['NDropdown']
+    NEl: typeof import('naive-ui')['NEl']
     NEmpty: typeof import('naive-ui')['NEmpty']
     NIcon: typeof import('naive-ui')['NIcon']
     NLoadingBarProvider: typeof import('naive-ui')['NLoadingBarProvider']

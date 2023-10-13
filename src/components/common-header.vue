@@ -55,12 +55,13 @@ document.title = props.title;
     </template>
 
     <h1
-      class="grow w-0 c-slate-7"
+      class="grow w-0"
       :class="{
         'text-lg': props.size === 'small',
         'text-xl': props.size === 'medium',
         'text-2xl': props.size === 'large',
       }"
+      style="color: var(--text-color-2)"
     >
       {{ props.title }}
     </h1>

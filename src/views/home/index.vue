@@ -130,7 +130,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full min-h-screen flex flex-col bg-slate-1">
+  <div class="w-full min-h-screen flex flex-col">
     <page-header
       ref="headerRef"
       :show-shadow="scrollTop > 0"

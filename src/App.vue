@@ -7,7 +7,7 @@ const appStore = useAppStore();
 // 主题覆写
 // const themeOverrides = {
 //   common: {
-//     primaryColor: "#3b82f6",
+//     baseColor: "#f1f5f9",
 //   },
 // };
 
@@ -23,13 +23,17 @@ onMounted(() => {
 <template>
   <n-config-provider :theme="appStore.currentTheme.theme">
     <global-provider>
-      <main class="h-screen of-y-auto bg-slate-1 c-slate-7 select-none">
+      <n-el
+        tag="main"
+        class="h-screen of-y-auto select-none"
+        style="color: var(--primary-color); background-color: var(--base-color)"
+      >
         <router-view v-slot="{ Component, route }">
           <transition :name="route.meta.transition as string || 'fade'">
             <component :is="Component" />
           </transition>
         </router-view>
-      </main>
+      </n-el>
     </global-provider>
   </n-config-provider>
 </template>

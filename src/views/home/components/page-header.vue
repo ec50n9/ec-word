@@ -9,6 +9,8 @@ import {
   HelpRound,
   MenuRound,
   SourceRound,
+  LightModeTwotone,
+  DarkModeTwotone,
 } from "@vicons/material";
 import CommonHeader from "@/components/common-header.vue";
 import { NIcon, DropdownOption } from "naive-ui";
@@ -135,13 +137,13 @@ const dropdownOptions: CustomDropdownOption[] = [
   {
     label: "主题",
     key: "theme",
-    icon: renderIcon(RecordVoiceOverTwotone),
+    icon: renderIcon(LightModeTwotone),
     children: Object.keys(themeMap).map((key) => {
       const theme = themeMap[key as ThemeType];
       return {
         label: theme.name,
-        key: theme.name,
-        icon: () => h("span", null, ""),
+        key,
+        icon: renderIcon(theme.icon),
         onClick: () => {
           appStore.updateCurrentTheme(key as ThemeType);
         },
@@ -191,6 +193,11 @@ const handleDropdownSelect = (
   option.onClick?.();
 };
 
+const darkMode = computed<boolean>({
+  get: () => appStore.currentTheme.name === themeMap.dark.name,
+  set: (value) => appStore.updateCurrentTheme(value ? "dark" : "light"),
+});
+
 // 暴露方法
 defineExpose({
   dropdownOptions,
@@ -220,6 +227,22 @@ defineExpose({
         </template>
         <template #checked>🇺🇸</template>
         <template #unchecked>🇬🇧</template>
+      </n-switch>
+
+      <!-- 主题切换 -->
+      <n-switch
+        class="shrink-0"
+        v-model:value="darkMode"
+        :round="false"
+        size="large"
+        :loading="audioLoading"
+      >
+        <template #checked-icon>
+          <n-icon :component="DarkModeTwotone" />
+        </template>
+        <template #unchecked-icon>
+          <n-icon :component="LightModeTwotone" />
+        </template>
       </n-switch>
 
       <!-- 配置按钮 -->
