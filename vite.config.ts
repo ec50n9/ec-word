@@ -27,6 +27,7 @@ export default defineConfig({
             "useMessage",
             "useNotification",
             "useLoadingBar",
+            "useThemeVars",
           ],
         },
       ],
@@ -34,6 +35,7 @@ export default defineConfig({
     }),
     Components({
       resolvers: [NaiveUiResolver()],
+      dts: "./src/types/components.d.ts",
     }),
   ],
   resolve: {

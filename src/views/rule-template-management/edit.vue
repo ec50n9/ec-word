@@ -35,9 +35,6 @@ const value = ref("");
 
 // 获取模板请求
 const getRuleTemplateReq = useRequest(() => getRuleTemplate(id));
-getRuleTemplateReq.onError((err) => {
-  message.error(err.error.message);
-});
 getRuleTemplateReq.onSuccess((res) => {
   value.value = res.data.code;
 });
@@ -134,9 +131,6 @@ const updateRuleTemplateReq = useRequest(
   () => updateRuleTemplate({ _id: id, code: value.value }),
   { immediate: false }
 );
-updateRuleTemplateReq.onError((err) => {
-  message.error(err.error.message);
-});
 updateRuleTemplateReq.onSuccess((_res) => {
   message.success("保存成功！");
 });

@@ -17,9 +17,6 @@ const message = useMessage();
 
 // 获取模板列表请求
 const listRuleTemplatesReq = useRequest(() => listRuleTemplates("mine"));
-listRuleTemplatesReq.onError((err) => {
-  message.error(err.error.message);
-});
 
 // 创建模板弹窗可见性
 const createRuleTemplateModalVisible = ref(false);
@@ -64,9 +61,6 @@ const createRuleTemplateReq = useRequest(
   () => createRuleTemplate(createRuleTemplateForm),
   { immediate: false }
 );
-createRuleTemplateReq.onError((err) => {
-  message.error(err.error.message);
-});
 createRuleTemplateReq.onSuccess((_res) => {
   message.success("创建成功");
 
@@ -87,9 +81,6 @@ const handleMarketClick = () => {};
 // 删除模板请求
 const deleteRuleTemplateReq = useRequest(deleteRuleTemplate, {
   immediate: false,
-});
-deleteRuleTemplateReq.onError((err) => {
-  message.error(err.error.message);
 });
 deleteRuleTemplateReq.onSuccess((_res) => {
   message.success("删除成功");

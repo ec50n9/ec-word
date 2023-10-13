@@ -7,7 +7,6 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 const userStore = useUserStore();
-const dialog = useDialog();
 const message = useMessage();
 const router = useRouter();
 
@@ -25,13 +24,6 @@ const registerReq = useRequest(
   () => registerUser(formValue.value.username, formValue.value.password),
   { immediate: false }
 );
-// 注册失败
-registerReq.onError((err) => {
-  dialog.error({
-    title: "注册失败",
-    content: err.error.message,
-  });
-});
 // 注册成功
 registerReq.onSuccess(() => {
   message.success("注册成功!");
@@ -47,13 +39,6 @@ const loginReq = useRequest(
   () => loginUser(formValue.value.username, formValue.value.password),
   { immediate: false }
 );
-// 登录失败
-loginReq.onError((err) => {
-  dialog.error({
-    title: "登录失败",
-    content: err.error.message,
-  });
-});
 // 登录成功
 loginReq.onSuccess(({ data }) => {
   message.success("登录成功!");
