@@ -3,6 +3,7 @@ import VueHook from "alova/vue";
 import GlobalFetch from "alova/GlobalFetch";
 import { useUserStore } from "@/store/modules/user";
 import router from "@/router";
+import { useProviderStore } from "@/store/modules/provider";
 
 const baseURL = import.meta.env.VITE_APP_BASE_URL;
 
@@ -22,7 +23,12 @@ export const commonAlova = createAlova({
   async responded(response) {
     const json = await response.json();
     if (json.code === -1) router.replace("/login");
-    if (json.error) throw new Error(json.error);
+    if (json.error) {
+      const providerStore = useProviderStore();
+      providerStore.message?.error(json.error);
+
+      throw new Error(json.error);
+    }
     return json;
   },
 });

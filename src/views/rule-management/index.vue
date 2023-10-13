@@ -27,9 +27,6 @@ const message = useMessage();
 
 // 获取规则列表请求
 const listRulesReq = useRequest(listRules);
-listRulesReq.onError((err) => {
-  message.error(err.error.message);
-});
 
 // 创建规则弹窗
 const createRuleDrawerVisible = ref(false);
@@ -67,9 +64,6 @@ const createRuleFormRules = {
 // 加载规则模板列表请求
 const listRuleTemplatesReq = useRequest(listRuleTemplates, {
   immediate: false,
-});
-listRuleTemplatesReq.onError((err) => {
-  message.error(err.error.message);
 });
 
 const ruleTemplateOptions = computed(() => {
@@ -113,9 +107,6 @@ const handleRuleTemplateClick = (ruleTemplateId: string) => {
 const createRuleReq = useRequest(() => createRule(createRuleForm), {
   immediate: false,
 });
-createRuleReq.onError((err) => {
-  message.error(err.error.message);
-});
 createRuleReq.onSuccess((_res) => {
   message.success("创建成功");
 
@@ -139,9 +130,6 @@ const handleCreateRule = () => {
 
 // 删除规则请求
 const deleteRuleReq = useRequest(deleteRule, { immediate: false });
-deleteRuleReq.onError((err) => {
-  message.error(err.error.message);
-});
 deleteRuleReq.onSuccess((_res) => {
   message.success("删除成功");
 

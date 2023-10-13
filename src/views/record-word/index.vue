@@ -25,9 +25,6 @@ const inputValue = ref("");
 
 // 上传单词接口
 const recordWordReq = useRequest(recordWord, { immediate: false });
-recordWordReq.onError((err) => {
-  message.error(err.error.message);
-});
 recordWordReq.onSuccess(() => {
   inputValue.value = "";
   invalidateCache(listMyWords());
@@ -37,18 +34,12 @@ recordWordReq.onSuccess(() => {
 
 // 翻译接口
 const translateReq = useRequest(translate, { immediate: false });
-translateReq.onError((err) => {
-  message.error(err.error.message);
-});
 translateReq.onSuccess((_res) => {
   drawerVisible.value = true;
 });
 
 // 批量查询单词接口
 const batchQueryReq = useRequest(batchQueryWord, { immediate: false });
-batchQueryReq.onError((err) => {
-  message.error(err.error.message);
-});
 batchQueryReq.onSuccess((_res) => {
   drawerVisible.value = true;
 });
