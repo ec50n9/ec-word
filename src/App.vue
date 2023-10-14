@@ -4,13 +4,6 @@ import { useAppStore } from "./store/modules/app";
 
 const appStore = useAppStore();
 
-// 主题覆写
-// const themeOverrides = {
-//   common: {
-//     baseColor: "#f1f5f9",
-//   },
-// };
-
 onMounted(() => {
   // vconsole调试
   if (import.meta.env.DEV) {
@@ -21,7 +14,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <n-config-provider :theme="appStore.currentTheme.theme">
+  <n-config-provider
+    :theme="appStore.currentTheme.theme"
+    :theme-overrides="appStore.currentTheme.themeOverrides"
+  >
     <global-provider>
       <n-el
         tag="main"
