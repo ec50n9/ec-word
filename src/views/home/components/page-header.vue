@@ -19,6 +19,7 @@ import router from "@/router";
 import { useUserStore } from "@/store/modules/user";
 import { useAppStore } from "@/store/modules/app";
 import { ThemeType, themeMap } from "@/config/theme";
+import { useI18n } from "vue-i18n";
 
 defineProps<{
   showShadow: boolean;
@@ -34,6 +35,7 @@ const userStore = useUserStore();
 const appStore = useAppStore();
 const dialog = useDialog();
 const message = useMessage();
+const { t } = useI18n();
 
 // 语音类型切换的背景色
 const railStyle = ({
@@ -65,15 +67,16 @@ const renderIcon = (icon: Component) => () =>
 type CustomDropdownOption = DropdownOption & { onClick?: () => void };
 const dropdownOptions: CustomDropdownOption[] = [
   {
-    label: "添加单词",
+    label: t("add-word"),
     key: "add-word",
     icon: renderIcon(PlusRound),
     onClick: () => router.push("/record-word"),
   },
   {
-    label: "翻译",
+    label: t("translate"),
     key: "translate",
     icon: renderIcon(TranslateRound),
+    onClick: () => router.push("/translate"),
   },
   {
     type: "divider",
