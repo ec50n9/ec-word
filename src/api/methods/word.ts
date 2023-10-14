@@ -146,6 +146,7 @@ export const translate = (
         // @ts-ignore
         return query.map((q, i) => ({ word: q, translation: result[i] }));
       },
+      localCache: 5 * 60 * 1000,
     }
   );
 };
